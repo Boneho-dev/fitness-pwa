@@ -48,6 +48,73 @@ $stmt_user = $pdo->prepare("SELECT * FROM fitness_users WHERE id = ?");
 $stmt_user->execute([$_SESSION['user_id']]);
 $user = $stmt_user->fetch();
 $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_avatar.png';
+
+/**
+ * Construit et vérifie le chemin d'une vidéo
+ * Gère les extensions .mp4 et .mp4.mp4 (cas du serveur)
+ * 
+ * @param string $videoFile Nom du fichier depuis la base
+ * @param string $gender Genre de l'exercice
+ * @return string|false URL relative si trouvée, false sinon
+ */
+function getVideoUrl($videoFile, $gender)
+{
+  // Nettoyer le nom de fichier
+  $videoFile = trim($videoFile);
+  if (empty($videoFile)) return false;
+
+  // Déterminer le dossier selon le genre
+  $folder = ($gender === 'female') ? 'female' : 'male';
+  $baseDir = __DIR__ . "/../assets/videos/{$folder}/";
+  $baseUrl = "../assets/videos/{$folder}/";
+
+  // Extensions possibles à tester
+  $extensions = ['', '.mp4', '.mp4.mp4'];
+
+  // Si le fichier a déjà une extension, la garder telle quelle
+  if (preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
+    $extensions = ['']; // Tester tel quel
+  }
+
+  foreach ($extensions as $ext) {
+    $testFile = $videoFile . $ext;
+    $absolutePath = $baseDir . $testFile;
+
+    if (file_exists($absolutePath) && is_readable($absolutePath)) {
+      return $baseUrl . $testFile;
+    }
+  }
+
+  // Essayer l'autre dossier si gender est 'both'
+  if ($gender === 'both') {
+    $otherFolder = ($folder === 'male') ? 'female' : 'male';
+    $altDir = __DIR__ . "/../assets/videos/{$otherFolder}/";
+    $altUrl = "../assets/videos/{$otherFolder}/";
+
+    foreach ($extensions as $ext) {
+      $testFile = $videoFile . $ext;
+      $altPath = $altDir . $testFile;
+
+      if (file_exists($altPath) && is_readable($altPath)) {
+        return $altUrl . $testFile;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Génère un placeholder SVG pour les vidéos manquantes
+ */
+function getVideoPlaceholder($exerciseName)
+{
+  $initial = strtoupper(substr($exerciseName, 0, 1));
+  $colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
+  $color = $colors[ord($initial) % count($colors)];
+
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%23111'/%3E%3Ccircle cx='160' cy='90' r='40' fill='{$color}' opacity='0.3'/%3E%3Cpath d='M145 75 L145 105 L185 90 Z' fill='{$color}'/%3E%3Ctext x='160' y='145' font-family='Arial' font-size='12' fill='%23666' text-anchor='middle'%3E" . urlencode($exerciseName) . "%3C/text%3E%3C/svg%3E";
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -60,10 +127,10 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AGRE Fitness">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="description" content="<?= __t('exercises_subtitle', $lang) ?>">
+  <meta name="description" content="<?= __('exercises_subtitle', $lang) ?>">
   <link rel="manifest" href="../manifest.json">
   <link rel="apple-touch-icon" href="../assets/icons/icon-192x192.png">
-  <title><?= __t('exercises_title', $lang) ?></title>
+  <title><?= __('exercises_title', $lang) ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Enregistrement du Service Worker
@@ -295,7 +362,17 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
       overflow: hidden;
       border-radius: 12px;
       aspect-ratio: 16/9;
-      background: #1a1a1a;
+      background: #111;
+    }
+
+    .video-placeholder,
+    .mobile-placeholder {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 12px;
     }
 
     .video-thumb video {
@@ -336,6 +413,16 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
 
     .video-thumb:hover .play-icon {
       transform: scale(1.1);
+    }
+
+    /* États pour vidéos manquantes */
+    .play-overlay.no-video .play-icon {
+      background: rgba(100, 100, 100, 0.5) !important;
+      transform: none !important;
+    }
+
+    .mobile-play-icon.no-video {
+      background: rgba(100, 100, 100, 0.5) !important;
     }
 
     /* V1.1 : Modal vidéo plein écran */
@@ -413,7 +500,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
       </svg>
-      <span class="text-sm font-bold"><?= __t('exercises_back', $lang) ?></span>
+      <span class="text-sm font-bold"><?= __('exercises_back', $lang) ?></span>
     </a>
   </div>
 
@@ -423,79 +510,86 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
     <header class="text-center mb-8 animate-fade-in">
       <h1 class="text-3xl font-black tracking-tight mb-2">
         <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          <?= __t('exercises_header', $lang) ?>
+          <?= __('exercises_header', $lang) ?>
         </span>
       </h1>
-      <p class="text-gray-500 text-sm"><?= __t('exercises_subtitle', $lang) ?></p>
+      <p class="text-gray-500 text-sm"><?= __('exercises_subtitle', $lang) ?></p>
     </header>
 
     <!-- Onglets de filtrage -->
     <div class="flex justify-center gap-4 mb-8 animate-fade-in">
       <button onclick="switchTab('hommes')" id="tab-hommes" class="tab-btn px-8 py-3 rounded-xl border border-gray-700 font-bold flex items-center gap-2 tab-active">
         <span class="text-xl">♂️</span>
-        <span><?= __t('exercises_tab_men', $lang) ?></span>
+        <span><?= __('exercises_tab_men', $lang) ?></span>
       </button>
       <button onclick="switchTab('femmes')" id="tab-femmes" class="tab-btn px-8 py-3 rounded-xl border border-gray-700 font-bold flex items-center gap-2">
         <span class="text-xl">♀️</span>
-        <span><?= __t('exercises_tab_women', $lang) ?></span>
+        <span><?= __('exercises_tab_women', $lang) ?></span>
       </button>
     </div>
 
-    <!-- Section Hommes : Desktop Grid -->
+    <!-- Section Hommes : Galerie Vidéo -->
     <div id="content-hommes" class="tab-content active animate-fade-in">
       <?php if (!empty($videosMale)): ?>
         <!-- Desktop Grid -->
         <div class="video-grid-desktop">
           <?php foreach ($videosMale as $index => $video):
-            $videoFile = $video['video_file'];
-            if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
-              $videoFile .= '.mp4';
-            }
-            // Déterminer le dossier vidéo selon le gender (male/female, both = male par défaut)
-            $videoGender = ($video['gender'] === 'female') ? 'female' : 'male';
-            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
+            $videoUrl = getVideoUrl($video['video_file'], $video['gender']);
+            $hasVideo = $videoUrl !== false;
+            $placeholder = getVideoPlaceholder($video['name_fr']);
           ?>
             <div class="glass-card rounded-xl p-3 hover:border-blue-500/30 transition-all group"
-              onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
-              <div class="video-thumb mb-3">
-                <video src="<?= $videoUrl ?>"
-                  muted
-                  loop
-                  preload="metadata"
-                  onmouseenter="this.play()"
-                  onmouseleave="this.pause(); this.currentTime = 0;">
-                </video>
-                <div class="play-overlay">
+              <?= $hasVideo ? "onclick=\"openVideoModal('" . htmlspecialchars($videoUrl) . "', '" . htmlspecialchars(addslashes($video['name_fr'])) . "', 'hommes')\"" : '' ?>>
+              <div class="video-thumb mb-3 relative">
+                <?php if ($hasVideo): ?>
+                  <video src="<?= htmlspecialchars($videoUrl) ?>"
+                    muted loop preload="metadata"
+                    onmouseenter="this.play()"
+                    onmouseleave="this.pause(); this.currentTime = 0;">
+                  </video>
+                <?php else: ?>
+                  <div class="video-placeholder" style="background-image: url('<?= $placeholder ?>')"></div>
+                <?php endif; ?>
+                <div class="play-overlay <?= $hasVideo ? '' : 'no-video' ?>">
                   <div class="play-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+                    <?php if ($hasVideo): ?>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    <?php else: ?>
+                      <span class="text-xs text-gray-400">Vidéo<br>bientôt</span>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>
               <h4 class="font-bold text-sm mb-1 text-blue-400 truncate"><?= htmlspecialchars($video['name_fr']) ?></h4>
-              <p class="text-gray-500 text-xs truncate"><?= htmlspecialchars($video['muscle_group'] ?? 'Général') ?></p>
+              <p class="text-gray-500 text-xs truncate"><?= htmlspecialchars($video['muscle_group'] ?? 'général') ?></p>
             </div>
           <?php endforeach; ?>
         </div>
 
-        <!-- Mobile Grid : Miniatures compactes -->
+        <!-- Mobile Grid -->
         <div class="video-grid-mobile">
           <?php foreach ($videosMale as $index => $video):
-            $videoFile = $video['video_file'];
-            if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
-              $videoFile .= '.mp4';
-            }
-            // Déterminer le dossier vidéo selon le gender (male/female, both = male par défaut)
-            $videoGender = ($video['gender'] === 'female') ? 'female' : 'male';
-            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
+            $videoUrl = getVideoUrl($video['video_file'], $video['gender']);
+            $hasVideo = $videoUrl !== false;
+            $placeholder = getVideoPlaceholder($video['name_fr']);
           ?>
-            <div class="mobile-thumbnail group" onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
-              <video src="<?= $videoUrl ?>" muted preload="metadata"></video>
-              <div class="mobile-play-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+            <div class="mobile-thumbnail group"
+              <?= $hasVideo ? "onclick=\"openVideoModal('" . htmlspecialchars($videoUrl) . "', '" . htmlspecialchars(addslashes($video['name_fr'])) . "', 'hommes')\"" : '' ?>>
+              <?php if ($hasVideo): ?>
+                <video src="<?= htmlspecialchars($videoUrl) ?>" muted preload="metadata"></video>
+              <?php else: ?>
+                <div class="mobile-placeholder" style="background-image: url('<?= $placeholder ?>')"></div>
+              <?php endif; ?>
+              <div class="mobile-play-icon <?= $hasVideo ? '' : 'no-video' ?>">
+                <?php if ($hasVideo): ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                <?php else: ?>
+                  <span class="text-xs text-gray-400">Bientôt</span>
+                <?php endif; ?>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
                 <h4 class="text-white text-xs font-bold truncate"><?= htmlspecialchars($video['name_fr']) ?></h4>
@@ -505,66 +599,73 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
         </div>
       <?php else: ?>
         <div class="text-center py-12 glass-card rounded-xl">
-          <p class="text-gray-500"><?= __t('exercises_no_videos', $lang) ?></p>
+          <p class="text-gray-500"><?= __('exercises_no_videos', $lang) ?></p>
         </div>
       <?php endif; ?>
     </div>
 
-    <!-- Section Femmes : Desktop Grid -->
+    <!-- Section Femmes : Galerie Vidéo -->
     <div id="content-femmes" class="tab-content animate-fade-in">
       <?php if (!empty($videosFemale)): ?>
         <!-- Desktop Grid -->
         <div class="video-grid-desktop">
           <?php foreach ($videosFemale as $index => $video):
-            $videoFile = $video['video_file'];
-            if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
-              $videoFile .= '.mp4';
-            }
-            // Déterminer le dossier vidéo selon le gender (female/male, both = female par défaut pour cette section)
-            $videoGender = ($video['gender'] === 'male') ? 'male' : 'female';
-            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
+            $videoUrl = getVideoUrl($video['video_file'], $video['gender']);
+            $hasVideo = $videoUrl !== false;
+            $placeholder = getVideoPlaceholder($video['name_fr']);
           ?>
             <div class="glass-card rounded-xl p-3 hover:border-pink-500/30 transition-all group"
-              onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
-              <div class="video-thumb mb-3">
-                <video src="<?= $videoUrl ?>"
-                  muted
-                  loop
-                  preload="metadata"
-                  onmouseenter="this.play()"
-                  onmouseleave="this.pause(); this.currentTime = 0;">
-                </video>
-                <div class="play-overlay">
-                  <div class="play-icon" style="background: rgba(236, 72, 153, 0.9);">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+              <?= $hasVideo ? "onclick=\"openVideoModal('" . htmlspecialchars($videoUrl) . "', '" . htmlspecialchars(addslashes($video['name_fr'])) . "', 'femmes')\"" : '' ?>>
+              <div class="video-thumb mb-3 relative">
+                <?php if ($hasVideo): ?>
+                  <video src="<?= htmlspecialchars($videoUrl) ?>"
+                    muted loop preload="metadata"
+                    onmouseenter="this.play()"
+                    onmouseleave="this.pause(); this.currentTime = 0;">
+                  </video>
+                <?php else: ?>
+                  <div class="video-placeholder" style="background-image: url('<?= $placeholder ?>')"></div>
+                <?php endif; ?>
+                <div class="play-overlay <?= $hasVideo ? '' : 'no-video' ?>">
+                  <div class="play-icon" style="<?= $hasVideo ? 'background: rgba(236, 72, 153, 0.9);' : '' ?>">
+                    <?php if ($hasVideo): ?>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    <?php else: ?>
+                      <span class="text-xs text-gray-400">Vidéo<br>bientôt</span>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>
               <h4 class="font-bold text-sm mb-1 text-pink-400 truncate"><?= htmlspecialchars($video['name_fr']) ?></h4>
-              <p class="text-gray-500 text-xs truncate"><?= htmlspecialchars($video['muscle_group'] ?? 'Général') ?></p>
+              <p class="text-gray-500 text-xs truncate"><?= htmlspecialchars($video['muscle_group'] ?? 'général') ?></p>
             </div>
           <?php endforeach; ?>
         </div>
 
-        <!-- Mobile Grid : Miniatures compactes -->
+        <!-- Mobile Grid -->
         <div class="video-grid-mobile">
           <?php foreach ($videosFemale as $index => $video):
-            $videoFile = $video['video_file'];
-            if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
-              $videoFile .= '.mp4';
-            }
-            // Déterminer le dossier vidéo selon le gender (female/male, both = female par défaut pour cette section)
-            $videoGender = ($video['gender'] === 'male') ? 'male' : 'female';
-            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
+            $videoUrl = getVideoUrl($video['video_file'], $video['gender']);
+            $hasVideo = $videoUrl !== false;
+            $placeholder = getVideoPlaceholder($video['name_fr']);
           ?>
-            <div class="mobile-thumbnail group" onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
-              <video src="<?= $videoUrl ?>" muted preload="metadata"></video>
-              <div class="mobile-play-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+            <div class="mobile-thumbnail group"
+              <?= $hasVideo ? "onclick=\"openVideoModal('" . htmlspecialchars($videoUrl) . "', '" . htmlspecialchars(addslashes($video['name_fr'])) . "', 'femmes')\"" : '' ?>>
+              <?php if ($hasVideo): ?>
+                <video src="<?= htmlspecialchars($videoUrl) ?>" muted preload="metadata"></video>
+              <?php else: ?>
+                <div class="mobile-placeholder" style="background-image: url('<?= $placeholder ?>')"></div>
+              <?php endif; ?>
+              <div class="mobile-play-icon <?= $hasVideo ? '' : 'no-video' ?>">
+                <?php if ($hasVideo): ?>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                <?php else: ?>
+                  <span class="text-xs text-gray-400">Bientôt</span>
+                <?php endif; ?>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
                 <h4 class="text-white text-xs font-bold truncate"><?= htmlspecialchars($video['name_fr']) ?></h4>
@@ -574,7 +675,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
         </div>
       <?php else: ?>
         <div class="text-center py-12 glass-card rounded-xl">
-          <p class="text-gray-500"><?= __t('exercises_no_videos', $lang) ?></p>
+          <p class="text-gray-500"><?= __('exercises_no_videos', $lang) ?></p>
         </div>
       <?php endif; ?>
     </div>
@@ -594,7 +695,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
       </svg>
-      <?= __t('exercises_close', $lang) ?>
+      <?= __('exercises_close', $lang) ?>
     </button>
 
     <video id="modalVideo" controls autoplay></video>

@@ -170,7 +170,7 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
             class="px-3 py-2 rounded-lg text-xs lg:text-sm font-bold text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all whitespace-nowrap">
             🎥
           </a>
-          <a href="pages/messages.php"
+          <a href="messages.php"
             class="px-3 py-2 rounded-lg text-xs lg:text-sm font-bold text-gray-400 hover:text-green-400 hover:bg-green-500/10 transition-all whitespace-nowrap">
             💬 <?= strtoupper(__('nav_messages', $lang)) ?>
           </a>
@@ -216,7 +216,7 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
     <a href="exercices.php" onclick="closeMobileMenu()">
       <span class="text-red-400">🎥</span> <?= strtoupper(__('nav_exercises', $lang)) ?>
     </a>
-    <a href="pages/messages.php" onclick="closeMobileMenu()">
+    <a href="messages.php" onclick="closeMobileMenu()">
       <span class="text-green-400">💬</span> <?= strtoupper(__('nav_messages', $lang)) ?>
     </a>
     <a href="profile.php" onclick="closeMobileMenu()">

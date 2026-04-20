@@ -335,7 +335,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
                 <div id="menu-<?= $post['id'] ?>" class="hidden absolute right-0 top-full mt-2 w-48 glass-card rounded-xl border border-gray-700 shadow-xl z-20 py-2">
                   <?php if ($post['is_own_post']): ?>
                     <!-- Options pour l'auteur -->
-                    <button onclick="editPost(<?= $post['id'] ?>, '<?= htmlspecialchars(addslashes($post['caption'])) ?>')"
+                    <button onclick="editPost(<?= $post['id'] ?>, <?= json_encode($post['caption'], JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) ?>)"
                       class="w-full text-left px-4 py-3 hover:bg-gray-800 flex items-center gap-2 text-sm text-blue-400 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
