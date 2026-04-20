@@ -451,7 +451,9 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
             if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
               $videoFile .= '.mp4';
             }
-            $videoUrl = "../assets/videos/{$video['gender']}/{$videoFile}";
+            // Déterminer le dossier vidéo selon le gender (male/female, both = male par défaut)
+            $videoGender = ($video['gender'] === 'female') ? 'female' : 'male';
+            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
           ?>
             <div class="glass-card rounded-xl p-3 hover:border-blue-500/30 transition-all group"
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
@@ -484,7 +486,9 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
             if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
               $videoFile .= '.mp4';
             }
-            $videoUrl = "../assets/videos/{$video['gender']}/{$videoFile}";
+            // Déterminer le dossier vidéo selon le gender (male/female, both = male par défaut)
+            $videoGender = ($video['gender'] === 'female') ? 'female' : 'male';
+            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
           ?>
             <div class="mobile-thumbnail group" onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
               <video src="<?= $videoUrl ?>" muted preload="metadata"></video>
@@ -516,7 +520,9 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
             if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
               $videoFile .= '.mp4';
             }
-            $videoUrl = "../assets/videos/{$video['gender']}/{$videoFile}";
+            // Déterminer le dossier vidéo selon le gender (female/male, both = female par défaut pour cette section)
+            $videoGender = ($video['gender'] === 'male') ? 'male' : 'female';
+            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
           ?>
             <div class="glass-card rounded-xl p-3 hover:border-pink-500/30 transition-all group"
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
@@ -549,7 +555,9 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
             if (!preg_match('/\.(mp4|webm|ogg)$/i', $videoFile)) {
               $videoFile .= '.mp4';
             }
-            $videoUrl = "../assets/videos/{$video['gender']}/{$videoFile}";
+            // Déterminer le dossier vidéo selon le gender (female/male, both = female par défaut pour cette section)
+            $videoGender = ($video['gender'] === 'male') ? 'male' : 'female';
+            $videoUrl = "../assets/videos/{$videoGender}/{$videoFile}";
           ?>
             <div class="mobile-thumbnail group" onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
               <video src="<?= $videoUrl ?>" muted preload="metadata"></video>

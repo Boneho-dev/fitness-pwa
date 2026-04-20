@@ -608,6 +608,13 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
       const caption = form.caption.value;
 
       try {
+        // Debug: afficher l'URL utilisée
+        console.log('Envoi vers: update_post.php');
+        console.log('Données:', {
+          post_id: postId,
+          caption: caption
+        });
+
         const response = await fetch('update_post.php', {
           method: 'POST',
           headers: {
@@ -616,14 +623,21 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
           body: `post_id=${postId}&caption=${encodeURIComponent(caption)}`
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Réponse:', data);
+
         if (data.success) {
           window.location.reload(); // Rechargement pour simplifier
         } else {
           alert(data.error || 'Erreur lors de la modification');
         }
       } catch (err) {
-        console.error('Erreur:', err);
+        console.error('Erreur complète:', err);
+        alert('Erreur réseau: ' + err.message);
       }
     }
 

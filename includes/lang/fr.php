@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =============================================================================
  * FICHIER DE TRADUCTION FRANÇAIS - AGRE FITNESS
@@ -13,12 +14,14 @@ return [
     'login_title' => 'Connexion - AGRE Fitness',
     'login_subtitle' => 'Connectez-vous à votre compte',
     'login_username' => 'Pseudo',
+    'login_username_placeholder' => 'Votre pseudo',
     'login_password' => 'Mot de passe',
+    'login_error_credentials' => 'Identifiants incorrects',
     'login_button' => 'SE CONNECTER',
     'login_no_account' => 'Pas encore de compte ?',
     'login_signup' => "S'inscrire",
     'login_error' => "Nom d'utilisateur ou mot de passe incorrect.",
-    
+
     // Page Signup
     'signup_title' => 'Inscription - AGRE Fitness',
     'signup_subtitle' => 'Créez votre compte',
@@ -31,7 +34,7 @@ return [
     'signup_button' => "S'INSCRIRE",
     'signup_has_account' => 'Déjà un compte ?',
     'signup_login' => 'Se connecter',
-    
+
     // Navigation
     'nav_dashboard' => 'Dashboard',
     'nav_feed' => 'Fil',
@@ -40,7 +43,7 @@ return [
     'nav_profile' => 'Profil',
     'nav_logout' => 'Quitter',
     'nav_add_workout' => 'Séance',
-    
+
     // Dashboard
     'dashboard_welcome' => 'Bon retour',
     'dashboard_tip' => 'Conseil du jour',
@@ -50,7 +53,7 @@ return [
     'dashboard_my_stats' => 'Mes statistiques',
     'dashboard_followers' => 'abonnés',
     'dashboard_following' => 'abonnements',
-    
+
     // Feed
     'feed_title' => 'Fil d\'actualité',
     'feed_new_post' => 'Nouvelle publication',
@@ -61,7 +64,7 @@ return [
     'feed_share' => 'Partager',
     'feed_search' => 'Rechercher un utilisateur...',
     'feed_no_posts' => 'Aucune publication pour le moment',
-    
+
     // Exercices
     'exercises_title' => 'Exercices',
     'exercises_header' => 'Bibliothèque d\'exercices',
@@ -74,7 +77,7 @@ return [
     'exercises_muscle_group' => 'Groupe musculaire',
     'exercises_difficulty' => 'Difficulté',
     'exercises_equipment' => 'Équipement',
-    
+
     // Messages
     'messages_title' => 'Messagerie',
     'messages_conversations' => 'Conversations',
@@ -89,7 +92,7 @@ return [
     'messages_placeholder' => 'Votre message...',
     'messages_back' => 'Retour',
     'messages_unread' => 'non lus',
-    
+
     // Profil
     'profile_title' => 'Profil',
     'profile_edit' => 'Modifier le profil',
@@ -105,16 +108,21 @@ return [
     'profile_edit_bio' => 'Modifier la bio',
     'profile_stats' => 'Statistiques',
     'profile_member_since' => 'Membre depuis',
-    
+
     // PWA
     'pwa_install' => 'Installer l\'app',
     'pwa_install_info' => 'Installez AGRE Fitness sur votre appareil pour un accès rapide',
     'pwa_offline' => 'Mode hors ligne disponible',
-    
+
     // Footer
     'footer_slogan' => 'Votre compagnon fitness ultime',
     'footer_rights' => 'Tous droits réservés',
-    
+
+    // PWA Install
+    'pwa_install_title' => 'Installer l\'application',
+    'pwa_install_description' => 'Ajoutez AGRE Fitness à votre écran d\'accueil pour un accès instantané',
+    'pwa_install_button' => 'Installer',
+
     // Landing Page
     'landing_welcome' => 'Bienvenue sur AGRE Fitness',
     'landing_subtitle' => 'La plateforme fitness qui vous accompagne dans votre transformation',
@@ -123,7 +131,7 @@ return [
     'landing_community' => 'Communauté',
     'landing_tracking' => 'Suivi',
     'landing_videos' => 'Vidéos',
-    
+
     // Erreurs
     'error_generic' => 'Une erreur est survenue',
     'error_404' => 'Page non trouvée',
@@ -134,7 +142,7 @@ return [
     'error_password_short' => 'Mot de passe trop court (min 6 caractères)',
     'error_username_taken' => 'Pseudo déjà utilisé',
     'error_email_taken' => 'Email déjà utilisé',
-    
+
     // Succès
     'success_login' => 'Connexion réussie !',
     'success_signup' => 'Inscription réussie !',
@@ -144,4 +152,8 @@ return [
     'success_unfollow' => 'Vous ne suivez plus cet utilisateur',
     'success_message_sent' => 'Message envoyé',
     'success_workout_added' => 'Séance enregistrée',
+
+    // Placeholders supplémentaires
+    'login_error_fields' => 'Veuillez remplir tous les champs',
+    'landing_footer' => 'Tous droits réservés',
 ];

@@ -8,6 +8,11 @@
  * Interface épurée avec sélecteur de langue et informations PWA.
  */
 
+// DEBUG - Afficher toutes les erreurs
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 session_start();
 require_once 'config/db.php';
 require_once 'includes/translations.php';
@@ -48,10 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       header('Location: pages/dashboard.php');
       exit;
     } else {
-      $error = __t('login_error_credentials');
+      $error = __('login_error');
     }
   } else {
-    $error = __t('login_error_fields');
+    $error = __('error_required');
   }
 }
 
@@ -70,7 +75,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="description" content="AGRE Fitness - Suivez votre évolution et partagez avec la communauté">
   <link rel="manifest" href="manifest.json">
-  <title><?= __t('login_title') ?></title>
+  <title><?= __('login_title') ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -215,7 +220,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
     <div class="flex items-center justify-between mb-6">
       <div class="lang-selector">
         <button class="lang-btn" onclick="toggleLangDropdown()" type="button">
-          <span><?= getLanguageFlag($lang) ?></span>
+          <span><?= SUPPORTED_LANGUAGES[$lang]['flag'] ?? '🏳️' ?></span>
           <span><?= strtoupper($lang) ?></span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -253,10 +258,10 @@ $lang = $_SESSION['lang'] ?? 'fr';
           </svg>
         </div>
         <div class="flex-1">
-          <p class="text-sm font-semibold mb-1"><?= __t('pwa_install_title') ?></p>
-          <p class="text-xs text-gray-400 mb-3"><?= __t('pwa_install_description') ?></p>
+          <p class="text-sm font-semibold mb-1"><?= __('pwa_install_title') ?></p>
+          <p class="text-xs text-gray-400 mb-3"><?= __('pwa_install_description') ?></p>
           <button class="pwa-install-btn" id="pwaInstallBtn">
-            <?= __t('pwa_install_button') ?>
+            <?= __('pwa_install_button') ?>
           </button>
         </div>
         <button onclick="hidePWABanner()" class="text-gray-500 hover:text-white">
@@ -272,7 +277,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
       <h1 class="text-4xl font-black tracking-tighter mb-2">
         <span class="text-[#3b82f6]">AGRE</span> <span class="text-white">FITNESS</span>
       </h1>
-      <p class="text-gray-500 text-sm"><?= __t('login_subtitle') ?></p>
+      <p class="text-gray-500 text-sm"><?= __('login_subtitle') ?></p>
     </div>
 
     <!-- Alertes -->
@@ -288,15 +293,15 @@ $lang = $_SESSION['lang'] ?? 'fr';
     <form method="POST" class="space-y-5">
       <!-- Pseudo -->
       <div>
-        <label class="block text-sm font-medium text-gray-400 mb-2"><?= __t('login_username') ?></label>
+        <label class="block text-sm font-medium text-gray-400 mb-2"><?= __('login_username') ?></label>
         <input type="text" name="username" required
           class="input-focus-ring w-full p-3.5 rounded-xl bg-[#111] border border-gray-800 text-white placeholder-gray-600 focus:border-[#3b82f6] focus:outline-none transition-all"
-          placeholder="<?= __t('login_username_placeholder') ?>">
+          placeholder="<?= __('login_username_placeholder') ?>">
       </div>
 
       <!-- Mot de passe -->
       <div>
-        <label class="block text-sm font-medium text-gray-400 mb-2"><?= __t('login_password') ?></label>
+        <label class="block text-sm font-medium text-gray-400 mb-2"><?= __('login_password') ?></label>
         <input type="password" name="password" required
           class="input-focus-ring w-full p-3.5 rounded-xl bg-[#111] border border-gray-800 text-white placeholder-gray-600 focus:border-[#3b82f6] focus:outline-none transition-all"
           placeholder="••••••••">
@@ -305,19 +310,19 @@ $lang = $_SESSION['lang'] ?? 'fr';
       <!-- Bouton -->
       <button type="submit"
         class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg shadow-blue-500/25">
-        <?= __t('login_button') ?>
+        <?= __('login_button') ?>
       </button>
     </form>
 
     <!-- Lien inscription -->
     <p class="text-center text-gray-500 text-sm mt-6">
-      <?= __t('login_no_account') ?>
-      <a href="signup.php" class="text-[#3b82f6] hover:text-blue-400 font-medium hover:underline transition-colors"><?= __t('login_signup_link') ?></a>
+      <?= __('login_no_account') ?>
+      <a href="signup.php" class="text-[#3b82f6] hover:text-blue-400 font-medium hover:underline transition-colors"><?= __('login_signup') ?></a>
     </p>
 
     <!-- Footer info -->
     <p class="text-center text-gray-600 text-xs mt-8">
-      AGRE Fitness v2.0 • <?= __t('landing_footer') ?>
+      AGRE Fitness v2.0 • <?= __('footer_rights') ?>
     </p>
   </div>
 
@@ -355,7 +360,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
     }
 
     function showPWAInfo() {
-      pwaBanner.classList.add('visible');
+      pwaBanner.classList.add('vi sible');
     }
 
     function hidePWABanner() {

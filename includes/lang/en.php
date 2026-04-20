@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =============================================================================
  * ENGLISH TRANSLATION FILE - AGRE FITNESS
@@ -13,12 +14,14 @@ return [
     'login_title' => 'Login - AGRE Fitness',
     'login_subtitle' => 'Sign in to your account',
     'login_username' => 'Username',
+    'login_username_placeholder' => 'Your username',
     'login_password' => 'Password',
     'login_button' => 'SIGN IN',
     'login_no_account' => "Don't have an account?",
     'login_signup' => 'Sign up',
+    'login_error_credentials' => 'Invalid credentials',
     'login_error' => 'Invalid username or password.',
-    
+
     // Page Signup
     'signup_title' => 'Sign Up - AGRE Fitness',
     'signup_subtitle' => 'Create your account',
@@ -31,7 +34,7 @@ return [
     'signup_button' => 'SIGN UP',
     'signup_has_account' => 'Already have an account?',
     'signup_login' => 'Log in',
-    
+
     // Navigation
     'nav_dashboard' => 'Dashboard',
     'nav_feed' => 'Feed',
@@ -40,7 +43,7 @@ return [
     'nav_profile' => 'Profile',
     'nav_logout' => 'Logout',
     'nav_add_workout' => 'Workout',
-    
+
     // Dashboard
     'dashboard_welcome' => 'Welcome back',
     'dashboard_tip' => "Today's tip",
@@ -50,7 +53,7 @@ return [
     'dashboard_my_stats' => 'My stats',
     'dashboard_followers' => 'followers',
     'dashboard_following' => 'following',
-    
+
     // Feed
     'feed_title' => 'News Feed',
     'feed_new_post' => 'New post',
@@ -61,7 +64,7 @@ return [
     'feed_share' => 'Share',
     'feed_search' => 'Search for a user...',
     'feed_no_posts' => 'No posts yet',
-    
+
     // Exercices
     'exercises_title' => 'Exercises',
     'exercises_header' => 'Exercise Library',
@@ -74,7 +77,7 @@ return [
     'exercises_muscle_group' => 'Muscle group',
     'exercises_difficulty' => 'Difficulty',
     'exercises_equipment' => 'Equipment',
-    
+
     // Messages
     'messages_title' => 'Messages',
     'messages_conversations' => 'Conversations',
@@ -89,7 +92,7 @@ return [
     'messages_placeholder' => 'Your message...',
     'messages_back' => 'Back',
     'messages_unread' => 'unread',
-    
+
     // Profil
     'profile_title' => 'Profile',
     'profile_edit' => 'Edit profile',
@@ -105,16 +108,21 @@ return [
     'profile_edit_bio' => 'Edit bio',
     'profile_stats' => 'Stats',
     'profile_member_since' => 'Member since',
-    
+
     // PWA
     'pwa_install' => 'Install app',
     'pwa_install_info' => 'Install AGRE Fitness on your device for quick access',
     'pwa_offline' => 'Offline mode available',
-    
+
     // Footer
     'footer_slogan' => 'Your ultimate fitness companion',
     'footer_rights' => 'All rights reserved',
-    
+
+    // PWA Install
+    'pwa_install_title' => 'Install App',
+    'pwa_install_description' => 'Add AGRE Fitness to your home screen for instant access',
+    'pwa_install_button' => 'Install',
+
     // Landing Page
     'landing_welcome' => 'Welcome to AGRE Fitness',
     'landing_subtitle' => 'The fitness platform that accompanies your transformation',
@@ -123,7 +131,7 @@ return [
     'landing_community' => 'Community',
     'landing_tracking' => 'Tracking',
     'landing_videos' => 'Videos',
-    
+
     // Erreurs
     'error_generic' => 'An error occurred',
     'error_404' => 'Page not found',
@@ -134,7 +142,7 @@ return [
     'error_password_short' => 'Password too short (min 6 characters)',
     'error_username_taken' => 'Username already taken',
     'error_email_taken' => 'Email already taken',
-    
+
     // Succès
     'success_login' => 'Login successful!',
     'success_signup' => 'Sign up successful!',
@@ -144,4 +152,8 @@ return [
     'success_unfollow' => 'You unfollowed this user',
     'success_message_sent' => 'Message sent',
     'success_workout_added' => 'Workout recorded',
+
+    // Additional
+    'login_error_fields' => 'Please fill in all fields',
+    'landing_footer' => 'All rights reserved',
 ];
