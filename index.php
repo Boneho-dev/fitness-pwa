@@ -211,6 +211,14 @@ $lang = $_SESSION['lang'] ?? 'fr';
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
     }
   </style>
+
+  <link rel="icon" type="image/png" href="/assets/icons/favicon-96x96.png?v=1.0" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg?v=1.0" />
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico?v=1.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png?v=1.0" />
+  <meta name="apple-mobile-web-app-title" content="AGRE Fitness" />
+  <link rel="manifest" href="/assets/icons/site.webmanifest?v=1.0" />
+  
 </head>
 
 <body class="text-white flex items-center justify-center min-h-screen font-sans p-4">

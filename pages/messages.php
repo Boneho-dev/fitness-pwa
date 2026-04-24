@@ -386,7 +386,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
             : ($isLastFromMe ? __('messages_you_prefix', $lang) . truncateMessage($conv['last_message'])
               : truncateMessage($conv['last_message']));
         ?>
-          <a href="chat_view.php?user=<?= (int)$conv['contact_id'] ?>"
+          <a href="conversation.php?user=<?= (int)$conv['contact_id'] ?>"
             data-username="<?= strtolower(htmlspecialchars($conv['username'])) ?>"
             class="contact-item glass-card rounded-2xl p-4 flex items-center gap-4 
                     <?= $hasUnread ? 'message-preview' : '' ?>
@@ -462,7 +462,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
         <?php foreach ($allUsers as $u):
           $isOnline = isUserOnline($u['last_active']);
         ?>
-          <a href="chat_view.php?user=<?= (int)$u['id'] ?>"
+          <a href="conversation.php?user=<?= (int)$u['id'] ?>"
             data-username="<?= strtolower(htmlspecialchars($u['username'])) ?>"
             class="member-item member-card rounded-xl p-4 text-center group">
             <div class="avatar-container mx-auto mb-3">

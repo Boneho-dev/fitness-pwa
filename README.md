@@ -39,7 +39,7 @@ AGRE-Fitness/
 │   ├── profile.php              # Profil utilisateur
 │   ├── exercices.php            # Bibliothèque vidéo
 │   ├── messages.php             # Messagerie
-│   ├── chat_view.php            # Conversation privée
+│   ├── conversation.php         # Conversation privée
 │   ├── add_workout.php          # Ajout de séance
 │   ├── follow_process.php       # API Follow/Unfollow
 │   └── search_users.php         # API Recherche utilisateurs
@@ -63,15 +63,15 @@ AGRE-Fitness/
 
 Architecture modulaire dans `/includes/lang/` :
 
-| Langue | Fichier | Flag |
-|--------|---------|------|
-| Français | `fr.php` | 🇫🇷 |
-| English | `en.php` | 🇬🇧 |
-| Español | `es.php` | 🇪🇸 |
-| Deutsch | `de.php` | 🇩🇪 |
-| Italiano | `it.php` | 🇮🇹 |
-| Português | `pt.php` | 🇵🇹 |
-| 中文 | `zh.php` | 🇨🇳 |
+| Langue    | Fichier  | Flag |
+| --------- | -------- | ---- |
+| Français  | `fr.php` | 🇫🇷   |
+| English   | `en.php` | 🇬🇧   |
+| Español   | `es.php` | 🇪🇸   |
+| Deutsch   | `de.php` | 🇩🇪   |
+| Italiano  | `it.php` | 🇮🇹   |
+| Português | `pt.php` | 🇵🇹   |
+| 中文      | `zh.php` | 🇨🇳   |
 
 ### Usage
 
@@ -92,16 +92,16 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ### Tables Principales
 
-| Table | Description |
-|-------|-------------|
-| `fitness_users` | Utilisateurs (auth, profil) |
-| `workouts` | Séances d'entraînement |
-| `posts` | Publications du fil social |
-| `comments` | Commentaires sur posts |
-| `likes` | J'aime sur posts |
-| `followers` | Relations follow/unfollow |
-| `conversations` | Conversations messages |
-| `messages` | Messages privés |
+| Table                 | Description                 |
+| --------------------- | --------------------------- |
+| `fitness_users`       | Utilisateurs (auth, profil) |
+| `workouts`            | Séances d'entraînement      |
+| `posts`               | Publications du fil social  |
+| `comments`            | Commentaires sur posts      |
+| `likes`               | J'aime sur posts            |
+| `followers`           | Relations follow/unfollow   |
+| `conversations`       | Conversations messages      |
+| `messages`            | Messages privés             |
 | `exercises_reference` | Bibliothèque 310+ exercices |
 
 ---
@@ -109,22 +109,26 @@ echo __('login_title', 'en');   // Forcer langue EN
 ## 🚀 Fonctionnalités Clés
 
 ### Authentification
+
 - 🔐 Connexion/Inscription sécurisées (PDO + password_hash)
 - 🍪 Sessions avec persistance
 
 ### Social
+
 - 👥 Système Follow/Unfollow AJAX
 - 📝 Posts avec likes et commentaires
 - 💬 Messagerie privée en temps réel
 - 🔍 Recherche prédictive d'utilisateurs
 
 ### Fitness
+
 - 📊 Tableau de bord avec statistiques
 - 🎥 Bibliothèque 310+ exercices vidéo
 - ✏️ Journal d'entraînement
 - 🏋️ Catégorisation par muscle/difficulté
 
 ### PWA
+
 - 📱 Installable sur mobile
 - 🔌 Mode hors ligne
 - 🔔 Push notifications (prêt)
@@ -134,13 +138,13 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ## 🛠️ Stack Technique
 
-| Couche | Technologie |
-|--------|-------------|
-| Backend | PHP 8.1+ (PDO, Sessions) |
-| Base | MySQL 5.7+ |
-| Frontend | HTML5, Tailwind CSS (CDN) |
-| Icons | Lucide / Heroicons |
-| PWA | Manifest v3, Service Worker |
+| Couche   | Technologie                 |
+| -------- | --------------------------- |
+| Backend  | PHP 8.1+ (PDO, Sessions)    |
+| Base     | MySQL 5.7+                  |
+| Frontend | HTML5, Tailwind CSS (CDN)   |
+| Icons    | Lucide / Heroicons          |
+| PWA      | Manifest v3, Service Worker |
 
 ---
 
@@ -174,6 +178,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 ## 👨‍💻 Architecture Code
 
 ### Bonnes Pratiques
+
 - 📁 Séparation logique/fonctionnelle
 - 🔄 Functions réutilisables
 - 📝 Commentaires en français
@@ -181,6 +186,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 - 🧩 Composants modulaires
 
 ### Patterns
+
 - **MVC simplifié** : Logique dans `/includes`, vues dans `/pages`
 - **API AJAX** : Endpoints dédiés (`*_process.php`)
 - **I18n** : Fichiers de langue séparés
