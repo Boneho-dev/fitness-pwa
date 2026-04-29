@@ -1,14 +1,16 @@
 FROM php:8.2-apache
 
-# 1. FIX APACHE MPM (Correction du crash "More than one MPM loaded")
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+# 1. SUPPRESSION RADICALE DU CONFLIT MPM
+# On supprime physiquement le chargement de mpm_event avant de forcer mpm_prefork
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+    && a2enmod mpm_prefork
 
 # 2. Extensions PHP nécessaires
 RUN apt-get update && apt-get install -y libonig-dev && \
     docker-php-ext-install pdo pdo_mysql mbstring && \
     rm -rf /var/lib/apt/lists/*
 
-# 3. Activer mod_rewrite (essentiel pour les liens propres)
+# 3. Activer mod_rewrite
 RUN a2enmod rewrite
 
 # 4. Copier le projet
