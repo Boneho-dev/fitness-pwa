@@ -218,7 +218,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png?v=1.0" />
   <meta name="apple-mobile-web-app-title" content="AGRE Fitness" />
   <link rel="manifest" href="/assets/icons/site.webmanifest?v=1.0" />
-  
+
 </head>
 
 <body class="text-white flex items-center justify-center min-h-screen font-sans p-4">

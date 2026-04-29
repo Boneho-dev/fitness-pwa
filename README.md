@@ -1,7 +1,7 @@
 # AGRE Fitness
 
 <p align="center">
-  <strong>🏋️ Application Fitness PWA avec Système Social</strong><br>
+  <strong> Application Fitness PWA avec Système Social</strong><br>
   <em>Plateforme fitness complète - Projet étudiant IT</em>
 </p>
 
@@ -59,7 +59,7 @@ AGRE-Fitness/
 
 ---
 
-## 🌍 Système Multilingue (7 Langues)
+## Système Multilingue (7 Langues)
 
 Architecture modulaire dans `/includes/lang/` :
 
@@ -88,7 +88,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 🗄️ Base de Données
+## Base de Données
 
 ### Tables Principales
 
@@ -106,37 +106,37 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 🚀 Fonctionnalités Clés
+## Fonctionnalités Clés
 
 ### Authentification
 
-- 🔐 Connexion/Inscription sécurisées (PDO + password_hash)
-- 🍪 Sessions avec persistance
+- Connexion/Inscription sécurisées (PDO + password_hash)
+- Sessions avec persistance
 
 ### Social
 
-- 👥 Système Follow/Unfollow AJAX
-- 📝 Posts avec likes et commentaires
-- 💬 Messagerie privée en temps réel
-- 🔍 Recherche prédictive d'utilisateurs
+- Système Follow/Unfollow AJAX
+- Posts avec likes et commentaires
+- Messagerie privée en temps réel
+- Recherche prédictive d'utilisateurs
 
 ### Fitness
 
-- 📊 Tableau de bord avec statistiques
-- 🎥 Bibliothèque 310+ exercices vidéo
-- ✏️ Journal d'entraînement
-- 🏋️ Catégorisation par muscle/difficulté
+- Tableau de bord avec statistiques
+- Bibliothèque 310+ exercices vidéo
+- Journal d'entraînement
+- Catégorisation par muscle/difficulté
 
 ### PWA
 
-- 📱 Installable sur mobile
-- 🔌 Mode hors ligne
-- 🔔 Push notifications (prêt)
-- ⚡ Service Worker caching
+- Installable sur mobile
+- Mode hors ligne
+- Push notifications (prêt)
+- Service Worker caching
 
 ---
 
-## 🛠️ Stack Technique
+## Stack Technique
 
 | Couche   | Technologie                 |
 | -------- | --------------------------- |
@@ -148,7 +148,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 📱 Responsive Design
+## Responsive Design
 
 - **Desktop** : Navigation complète, grilles 3-4 colonnes
 - **Tablet** : Navigation adaptée, grilles 2 colonnes
@@ -156,7 +156,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 🔒 Sécurité
+## Sécurité
 
 - ✅ Requêtes préparées PDO (anti-SQL Injection)
 - ✅ `htmlspecialchars()` pour XSS protection
@@ -166,7 +166,7 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 📦 Installation
+## Installation
 
 1. **Cloner** dans `C:\xampp\htdocs\fitness`
 2. **Importer** `database/exercises_library.sql` dans phpMyAdmin
@@ -175,15 +175,15 @@ echo __('login_title', 'en');   // Forcer langue EN
 
 ---
 
-## 👨‍💻 Architecture Code
+## Architecture Code
 
 ### Bonnes Pratiques
 
-- 📁 Séparation logique/fonctionnelle
-- 🔄 Functions réutilisables
-- 📝 Commentaires en français
-- 🎨 Design system cohérent (Glassmorphism)
-- 🧩 Composants modulaires
+- Séparation logique/fonctionnelle
+- Functions réutilisables
+- Commentaires en français
+- Design system cohérent (Glassmorphism)
+- Composants modulaires
 
 ### Patterns
 
@@ -194,6 +194,4 @@ echo __('login_title', 'en');   // Forcer langue EN
 ---
 
 <p align="center">
-  <strong>Projet étudiant IT - Exemplaire pour recruteurs</strong><br>
-  <em>Architecture propre, code maintenable, features complètes</em>
-</p>
+  <strong>Ange-Kevin AGRE - Full Stack Developer & IA Expert</strong> </p>
