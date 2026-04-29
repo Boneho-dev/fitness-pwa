@@ -1,24 +1,26 @@
 FROM php:8.2-apache
 
-# Extensions PDO MySQL + mbstring
-RUN docker-php-ext-install pdo pdo_mysql
-RUN apt-get update && apt-get install -y libonig-dev && docker-php-ext-install mbstring && rm -rf /var/lib/apt/lists/*
+# 1. FIX APACHE MPM (Correction du crash "More than one MPM loaded")
+RUN a2dismod mpm_event && a2enmod mpm_prefork
 
-# Activer mod_rewrite
+# 2. Extensions PHP nécessaires
+RUN apt-get update && apt-get install -y libonig-dev && \
+    docker-php-ext-install pdo pdo_mysql mbstring && \
+    rm -rf /var/lib/apt/lists/*
+
+# 3. Activer mod_rewrite (essentiel pour les liens propres)
 RUN a2enmod rewrite
 
-# Copier le projet à la racine web (/ sur Railway, pas /fitness/)
+# 4. Copier le projet
 COPY . /var/www/html/
 
-# Permissions
+# 5. Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && find /var/www/html -type d -exec chmod 755 {} \; \
     && find /var/www/html -type f -exec chmod 644 {} \;
 
-# Autoriser .htaccess dans le dossier web
+# 6. Configuration Apache pour Railway ($PORT)
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
-
-# Railway injecte $PORT → Apache doit écouter dessus
 RUN echo 'Listen ${PORT}' >> /etc/apache2/ports.conf
 RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/' /etc/apache2/sites-enabled/000-default.conf
 
