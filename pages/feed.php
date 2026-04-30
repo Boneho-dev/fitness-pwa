@@ -119,12 +119,20 @@ function get_time_ago(string $datetime)
   return date('d M Y', $time);
 }
 
-$profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] : null;
-if (empty($profilePic)) {
-  $_sf = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
-  $profilePic = file_exists($_sf)
-    ? 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg'
-    : 'default-avatar.png';
+// Résolution photo de profil : DB → .jpeg → .jpg → défaut
+$_uid    = (int)$_SESSION['user_id'];
+$_imgDir = __DIR__ . '/../assets/images/';
+$_jpeg   = 'profile_' . $_uid . '.jpeg';
+$_jpg    = 'profile_' . $_uid . '.jpg';
+
+if (!empty($currentUser['profile_pic']) && file_exists($_imgDir . $currentUser['profile_pic'])) {
+  $profilePic = $currentUser['profile_pic'];
+} elseif (file_exists($_imgDir . $_jpeg)) {
+  $profilePic = $_jpeg;
+} elseif (file_exists($_imgDir . $_jpg)) {
+  $profilePic = $_jpg;
+} else {
+  $profilePic = 'default-avatar.png';
 }
 ?>
 <!DOCTYPE html>
@@ -307,11 +315,16 @@ if (empty($profilePic)) {
         </div>
       <?php else: ?>
         <?php foreach ($posts as $post):
-          $postUserPic = !empty($post['profile_pic'])
-            ? $post['profile_pic']
-            : (file_exists(__DIR__ . '/../assets/images/profiles/profile_' . (int)$post['user_id'] . '.jpeg')
-              ? 'profiles/profile_' . (int)$post['user_id'] . '.jpeg'
-              : 'default-avatar.png');
+          $_puid = (int)$post['user_id'];
+          if (!empty($post['profile_pic']) && file_exists($_imgDir . $post['profile_pic'])) {
+            $postUserPic = $post['profile_pic'];
+          } elseif (file_exists($_imgDir . 'profile_' . $_puid . '.jpeg')) {
+            $postUserPic = 'profile_' . $_puid . '.jpeg';
+          } elseif (file_exists($_imgDir . 'profile_' . $_puid . '.jpg')) {
+            $postUserPic = 'profile_' . $_puid . '.jpg';
+          } else {
+            $postUserPic = 'default-avatar.png';
+          }
         ?>
           <article class="glass-card rounded-3xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all">
             <!-- Header du post -->

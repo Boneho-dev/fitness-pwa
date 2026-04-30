@@ -66,13 +66,22 @@ $allVideos = $stmt_videos->fetchAll();
 $videosMale = array_filter($allVideos, fn($v) => $v['gender'] === 'male');
 $videosFemale = array_filter($allVideos, fn($v) => $v['gender'] === 'female');
 
-$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : null;
-if (empty($profilePic)) {
-  $_staticFile = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
-  $profilePic = file_exists($_staticFile)
-    ? 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg'
-    : 'default-avatar.png';
+// Résolution photo de profil : DB (si fichier présent) → .jpeg → .jpg → défaut
+$_uid      = (int)$_SESSION['user_id'];
+$_imgDir   = __DIR__ . '/../assets/images/';
+$_jpeg     = 'profile_' . $_uid . '.jpeg';
+$_jpg      = 'profile_' . $_uid . '.jpg';
+
+if (!empty($user['profile_pic']) && file_exists($_imgDir . $user['profile_pic'])) {
+  $profilePic = $user['profile_pic'];                   // valeur DB valide
+} elseif (file_exists($_imgDir . $_jpeg)) {
+  $profilePic = $_jpeg;                                 // profile_{id}.jpeg
+} elseif (file_exists($_imgDir . $_jpg)) {
+  $profilePic = $_jpg;                                  // profile_{id}.jpg
+} else {
+  $profilePic = 'default-avatar.png';                   // aucun fichier trouvé
 }
+// Debug : chemin absolu cherché → ../assets/images/<?= $profilePic ?>
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -205,6 +214,7 @@ if (empty($profilePic)) {
 </head>
 
 <body class="text-white min-h-screen font-sans selection:bg-[#3b82f6] selection:text-white">
+  <script>console.log('[PHOTO] Chemin résolu :', '../assets/images/<?= addslashes($profilePic) ?>');</script>
 
   <!-- Navbar globale -->
   <?php require_once '../includes/navbar.php'; ?>
