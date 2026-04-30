@@ -66,7 +66,13 @@ $allVideos = $stmt_videos->fetchAll();
 $videosMale = array_filter($allVideos, fn($v) => $v['gender'] === 'male');
 $videosFemale = array_filter($allVideos, fn($v) => $v['gender'] === 'female');
 
-$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-avatar.png';
+$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : null;
+if (empty($profilePic)) {
+  $_staticFile = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
+  $profilePic = file_exists($_staticFile)
+    ? 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg'
+    : 'default-avatar.png';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">

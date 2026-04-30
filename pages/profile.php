@@ -111,8 +111,8 @@ try {
 
 $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : null;
 if (empty($profilePic)) {
-  $staticFile = "../assets/images/profiles/profile_{$profile_user_id}.jpeg";
-  $profilePic = file_exists($staticFile)
+  $_staticFile = __DIR__ . "/../assets/images/profiles/profile_{$profile_user_id}.jpeg";
+  $profilePic = file_exists($_staticFile)
     ? "profiles/profile_{$profile_user_id}.jpeg"
     : 'default-avatar.png';
 }
