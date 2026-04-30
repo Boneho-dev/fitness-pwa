@@ -10,20 +10,20 @@
 
 -- Vérifier et créer la table si elle n'existe pas
 CREATE TABLE IF NOT EXISTS `exercises_reference` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `name_fr` VARCHAR(100) NOT NULL,
-  `name_en` VARCHAR(100) DEFAULT NULL,
-  `muscle_group` VARCHAR(50) DEFAULT NULL,
-  `difficulty` ENUM('debutant', 'intermediaire', 'avance') DEFAULT 'debutant',
-  `equipment_type` ENUM('poids_du_corps', 'halteres', 'machine', 'barre', 'kettlebell', 'elastique', 'autre') DEFAULT 'poids_du_corps',
-  `video_file` VARCHAR(255) DEFAULT NULL,
-  `gender` ENUM('male', 'female', 'both') DEFAULT 'both',
-  `description` TEXT DEFAULT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX `idx_muscle_group` (`muscle_group`),
-  INDEX `idx_difficulty` (`difficulty`),
-  INDEX `idx_equipment` (`equipment_type`),
-  INDEX `idx_gender` (`gender`)
+`id` INT AUTO_INCREMENT PRIMARY KEY,
+`name_fr` VARCHAR(100) NOT NULL,
+`name_en` VARCHAR(100) DEFAULT NULL,
+`muscle_group` VARCHAR(50) DEFAULT NULL,
+`difficulty` ENUM('debutant', 'intermediaire', 'avance') DEFAULT 'debutant',
+`equipment_type` ENUM('poids_du_corps', 'halteres', 'machine', 'barre', 'kettlebell', 'elastique', 'autre') DEFAULT 'poids_du_corps',
+`video_file` VARCHAR(255) DEFAULT NULL,
+`gender` ENUM('male', 'female', 'both') DEFAULT 'both',
+`description` TEXT DEFAULT NULL,
+`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+INDEX `idx_muscle_group` (`muscle_group`),
+INDEX `idx_difficulty` (`difficulty`),
+INDEX `idx_equipment` (`equipment_type`),
+INDEX `idx_gender` (`gender`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
