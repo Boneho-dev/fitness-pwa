@@ -46,7 +46,7 @@ try {
     
     // Mise à jour
     $stmt = $pdo->prepare("UPDATE posts SET caption = ? WHERE id = ? AND user_id = ?");
-    $stmt->execute([htmlspecialchars($caption, ENT_QUOTES, 'UTF-8'), $postId, $currentUserId]);
+    $stmt->execute([$caption, $postId, $currentUserId]);
     
     if ($stmt->rowCount() >= 0) {
         echo json_encode([

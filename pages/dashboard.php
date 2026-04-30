@@ -235,14 +235,14 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-ava
       <div class="flex items-start gap-4">
         <!-- Photo du Créateur Ange-Kevin Agre -->
         <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-[#3b82f6] flex-shrink-0 bg-gray-800">
-          <img src="../assets/images/PHOTO_AGRE_IDENTITE.jpeg"
+          <img src="../assets/images/PHOTO_AGRE_IDENTITE.jpg"
             class="w-full h-full object-cover"
             style="object-position: center 20%;"
             alt="Ange-Kevin Agre - Créateur"
             onerror="this.src='../assets/images/default-avatar.png';">
         </div>
         <div class="flex-1">
-          <h2 class="text-lg font-bold mb-2 text-[#3b82f6]">Bienvenue sur FITNESS TRACKER</h2>
+          <h2 class="text-lg font-bold mb-2 text-[#3b82f6]">Bienvenue sur AGRE FITNESS TRACKER </h2>
           <p class="text-gray-300 leading-relaxed">
             Je suis <span class="text-white font-bold">Ange-Kevin Agre</span>, j'ai créé cette application pour vous aider à suivre votre évolution et exploser vos objectifs ! 💪
           </p>
@@ -369,7 +369,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-ava
     <!-- Footer -->
     <footer class="mt-16 pb-6 text-center">
       <p class="text-gray-600 text-xs uppercase tracking-[0.3em] font-bold">
-        <span class="text-[#3b82f6]">FITNESS</span> TRACKER • Copyright Agre Agency 2026
+        <span class="text-[#3b82f6]">AGRE</span> FITNESS • Engineered for Excellence
       </p>
     </footer>
 

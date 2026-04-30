@@ -44,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
     $file_type     = mime_content_type($_FILES['profile_pic']['tmp_name']);
 
     if (in_array($file_type, $allowed_types)) {
-      $file_ext  = strtolower(pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION));
-      $file_name = "profile_" . $current_user_id . "_" . time() . "." . $file_ext;
+      $file_name = "profile_" . $current_user_id . ".jpeg";
 
       if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_dir . $file_name)) {
         $profile_pic = 'profiles/' . $file_name;
@@ -110,7 +109,13 @@ try {
   exit;
 }
 
-$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-avatar.png';
+$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : null;
+if (empty($profilePic)) {
+  $staticFile = "../assets/images/profiles/profile_{$profile_user_id}.jpeg";
+  $profilePic = file_exists($staticFile)
+    ? "profiles/profile_{$profile_user_id}.jpeg"
+    : 'default-avatar.png';
+}
 
 // =============================================================================
 // STATISTIQUES FOLLOWERS/FOLLOWING

@@ -19,10 +19,17 @@ if (session_status() === PHP_SESSION_ACTIVE && function_exists('initLanguage')) 
 // Récupérer la langue courante
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 
-// Photo de profil pour la navbar (priorité : session user array > session directe > défaut)
+// Photo de profil pour la navbar (priorité : session user array > session directe > fichier statique > défaut)
 $_navProfilePic = $_SESSION['user']['profile_pic']
   ?? $_SESSION['profile_pic']
   ?? null;
+// Fallback statique : profile_{user_id}.jpeg commité dans le dépôt (contourne l'éphémère Railway)
+if (empty($_navProfilePic) && !empty($_SESSION['user_id'])) {
+  $_navStaticFile = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
+  if (file_exists($_navStaticFile)) {
+    $_navProfilePic = 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
+  }
+}
 $_navAvatarUrl = !empty($_navProfilePic)
   ? '../assets/images/' . htmlspecialchars($_navProfilePic)
   : '../assets/images/default-avatar.png';
