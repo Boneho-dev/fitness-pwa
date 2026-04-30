@@ -90,7 +90,7 @@ $posts = $stmt->fetchAll();
  * V1.1 - Fonction get_time_ago améliorée
  * Calcule le temps relatif réel depuis le timestamp
  */
-function get_time_ago($datetime)
+function get_time_ago(string $datetime)
 {
   if (empty($datetime)) return 'Date inconnue';
 
@@ -119,7 +119,13 @@ function get_time_ago($datetime)
   return date('d M Y', $time);
 }
 
-$profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] : 'default-avatar.png';
+$profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] : null;
+if (empty($profilePic)) {
+  $_sf = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
+  $profilePic = file_exists($_sf)
+    ? 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg'
+    : 'default-avatar.png';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -301,7 +307,11 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
         </div>
       <?php else: ?>
         <?php foreach ($posts as $post):
-          $postUserPic = !empty($post['profile_pic']) ? $post['profile_pic'] : 'default-avatar.png';
+          $postUserPic = !empty($post['profile_pic'])
+            ? $post['profile_pic']
+            : (file_exists(__DIR__ . '/../assets/images/profiles/profile_' . (int)$post['user_id'] . '.jpeg')
+              ? 'profiles/profile_' . (int)$post['user_id'] . '.jpeg'
+              : 'default-avatar.png');
         ?>
           <article class="glass-card rounded-3xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all">
             <!-- Header du post -->
