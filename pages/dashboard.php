@@ -235,7 +235,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-ava
       <div class="flex items-start gap-4">
         <!-- Photo du Créateur Ange-Kevin Agre -->
         <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-[#3b82f6] flex-shrink-0 bg-gray-800">
-          <img src="../assets/images/PHOTO_AGRE_IDENTITE.jpg"
+          <img src="../assets/images/PHOTO_AGRE_IDENTITE.jpeg"
             class="w-full h-full object-cover"
             alt="Ange-Kevin Agre - Créateur"
             onerror="this.src='../assets/images/default-avatar.png';">
