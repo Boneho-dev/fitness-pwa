@@ -36,7 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
   $profile_pic    = $_POST['old_pic'] ?? '';
 
   if (!empty($_FILES['profile_pic']['name']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
-    $target_dir    = "../assets/images/";
+    $target_dir    = "../assets/images/profiles/";
+    if (!is_dir($target_dir)) {
+      mkdir($target_dir, 0777, true);
+    }
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $file_type     = mime_content_type($_FILES['profile_pic']['tmp_name']);
 
@@ -45,8 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
       $file_name = "profile_" . $current_user_id . "_" . time() . "." . $file_ext;
 
       if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_dir . $file_name)) {
-        $profile_pic = $file_name;
-        $_SESSION['profile_pic'] = $profile_pic;
+        $profile_pic = 'profiles/' . $file_name;
       }
     }
   }
@@ -80,7 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
     ]);
 
     $message = 'Profil mis à jour avec succès !';
-    $_SESSION['username'] = $username;
+    $_SESSION['username']                = $username;
+    $_SESSION['profile_pic']             = $profile_pic;
+    $_SESSION['user']['profile_pic']     = $profile_pic;
   } catch (PDOException $e) {
     $message = "Erreur lors de la mise à jour.";
     error_log("Erreur mise à jour profil: " . $e->getMessage());
@@ -182,7 +186,9 @@ function formatRelativeTime(string $datetime): string
   <title><?= $is_own_profile ? 'Mon Profil | AGRE Fitness' : htmlspecialchars($user['username']) . ' | AGRE Fitness' ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { -webkit-tap-highlight-color: transparent; }
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
 
     body {
       background: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
@@ -209,16 +215,37 @@ function formatRelativeTime(string $datetime): string
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .animate-fade-in   { animation: fadeInUp 0.6s ease-out forwards; }
-    .animate-delay-1   { animation-delay: 0.1s; }
-    .animate-delay-2   { animation-delay: 0.2s; }
-    .animate-delay-3   { animation-delay: 0.3s; }
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
 
-    .avatar-ring { position: relative; }
+    .animate-delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .animate-delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .animate-delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    .avatar-ring {
+      position: relative;
+    }
+
     .avatar-ring::before {
       content: '';
       position: absolute;
@@ -232,6 +259,7 @@ function formatRelativeTime(string $datetime): string
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       transition: all 0.3s ease;
     }
+
     .btn-follow:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
@@ -241,6 +269,7 @@ function formatRelativeTime(string $datetime): string
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+
     .btn-following:hover {
       background: rgba(239, 68, 68, 0.2);
       border-color: rgba(239, 68, 68, 0.5);
@@ -252,6 +281,7 @@ function formatRelativeTime(string $datetime): string
       border: 1px solid rgba(255, 255, 255, 0.05);
       transition: all 0.3s ease;
     }
+
     .stat-card:hover {
       background: rgba(255, 255, 255, 0.05);
       transform: translateY(-2px);
@@ -262,6 +292,7 @@ function formatRelativeTime(string $datetime): string
       grid-template-columns: repeat(3, 1fr);
       gap: 4px;
     }
+
     @media (min-width: 768px) {
       .post-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -276,13 +307,17 @@ function formatRelativeTime(string $datetime): string
       border-radius: 8px;
       cursor: pointer;
     }
+
     .post-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
-    .post-item:hover img { transform: scale(1.1); }
+
+    .post-item:hover img {
+      transform: scale(1.1);
+    }
 
     .post-overlay {
       position: absolute;
@@ -295,7 +330,10 @@ function formatRelativeTime(string $datetime): string
       justify-content: center;
       gap: 16px;
     }
-    .post-item:hover .post-overlay { opacity: 1; }
+
+    .post-item:hover .post-overlay {
+      opacity: 1;
+    }
 
     .gender-badge {
       display: inline-flex;
@@ -306,8 +344,16 @@ function formatRelativeTime(string $datetime): string
       font-size: 0.75rem;
       font-weight: 500;
     }
-    .gender-male   { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-    .gender-female { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+
+    .gender-male {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .gender-female {
+      background: rgba(236, 72, 153, 0.2);
+      color: #f472b6;
+    }
   </style>
 </head>
 
@@ -459,7 +505,7 @@ function formatRelativeTime(string $datetime): string
           <div class="glass-card rounded-xl p-5">
             <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Genre</label>
             <select name="gender" required class="glass-input w-full rounded-lg p-3 text-white focus:outline-none bg-transparent">
-              <option value="male"   <?= ($user['gender'] ?? '') === 'male'   ? 'selected' : '' ?>>♂️ Homme</option>
+              <option value="male" <?= ($user['gender'] ?? '') === 'male'   ? 'selected' : '' ?>>♂️ Homme</option>
               <option value="female" <?= ($user['gender'] ?? '') === 'female' ? 'selected' : '' ?>>♀️ Femme</option>
             </select>
           </div>
@@ -596,7 +642,7 @@ function formatRelativeTime(string $datetime): string
 
     <footer class="mt-16 pb-6 text-center">
       <p class="text-gray-600 text-xs uppercase tracking-[0.3em] font-bold">
-        <span class="text-[#3b82f6]">AGRE</span> FITNESS
+        <span class="text-[#3b82f6]">FITNESS</span> TRACKER • Copyright Agre Agency 2026
       </p>
     </footer>
   </main>
@@ -613,16 +659,18 @@ function formatRelativeTime(string $datetime): string
     }
 
     async function toggleFollow(userId, isCurrentlyFollowing) {
-      const btn     = document.getElementById('followBtn');
+      const btn = document.getElementById('followBtn');
       const btnText = document.getElementById('followBtnText');
 
-      btn.disabled      = true;
+      btn.disabled = true;
       btn.style.opacity = '0.7';
 
       try {
         const response = await fetch('follow_process.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
           body: `following_id=${userId}&action=${isCurrentlyFollowing ? 'unfollow' : 'follow'}`
         });
 
@@ -658,7 +706,7 @@ function formatRelativeTime(string $datetime): string
         console.error('Erreur follow:', err);
         alert('Erreur de connexion');
       } finally {
-        btn.disabled      = false;
+        btn.disabled = false;
         btn.style.opacity = '1';
       }
     }

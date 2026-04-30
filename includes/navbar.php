@@ -18,6 +18,14 @@ if (session_status() === PHP_SESSION_ACTIVE && function_exists('initLanguage')) 
 
 // Récupérer la langue courante
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
+
+// Photo de profil pour la navbar (priorité : session user array > session directe > défaut)
+$_navProfilePic = $_SESSION['user']['profile_pic']
+  ?? $_SESSION['profile_pic']
+  ?? null;
+$_navAvatarUrl = !empty($_navProfilePic)
+  ? '../assets/images/' . htmlspecialchars($_navProfilePic)
+  : '../assets/images/default-avatar.png';
 ?>
 <style>
   /* Navbar responsive styles */
@@ -179,17 +187,22 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 
       <!-- Centre : Logo (toujours centré) -->
       <a href="dashboard.php" class="logo-center absolute left-1/2 transform -translate-x-1/2 text-lg md:text-xl font-black tracking-tighter">
-        <span class="text-[#3b82f6]">AGRE</span> <span class="text-white">FITNESS</span>
+        <span class="text-[#3b82f6]">FITNESS</span> <span class="text-white">TRACKER</span>
       </a>
 
       <!-- Droite : Profil + Quitter (desktop seulement) -->
       <div class="right-nav flex items-center gap-2">
         <a href="profile.php"
-          class="px-4 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span class="hidden xl:inline"><?= strtoupper(__('nav_profile', $lang)) ?></span>
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-800/60 transition-all group">
+          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-600 group-hover:border-[#3b82f6] transition-colors flex-shrink-0">
+            <img src="<?= $_navAvatarUrl ?>"
+              style="width:100%;height:100%;object-fit:cover;"
+              alt="Mon profil"
+              onerror="this.src='../assets/images/default-avatar.png'">
+          </div>
+          <span class="hidden xl:inline text-sm font-bold text-gray-400 group-hover:text-white transition-colors">
+            <?= strtoupper(__('nav_profile', $lang)) ?>
+          </span>
         </a>
         <a href="../logout.php"
           class="flex items-center gap-2 text-red-400 hover:text-white hover:bg-red-500 transition-all px-3 py-2 rounded-lg text-xs lg:text-sm font-bold border border-red-500/30 hover:border-red-500">

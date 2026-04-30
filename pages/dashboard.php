@@ -242,7 +242,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-ava
             onerror="this.src='../assets/images/default-avatar.png';">
         </div>
         <div class="flex-1">
-          <h2 class="text-lg font-bold mb-2 text-[#3b82f6]">Bienvenue sur AGRE FITNESS TRACKER </h2>
+          <h2 class="text-lg font-bold mb-2 text-[#3b82f6]">Bienvenue sur FITNESS TRACKER</h2>
           <p class="text-gray-300 leading-relaxed">
             Je suis <span class="text-white font-bold">Ange-Kevin Agre</span>, j'ai créé cette application pour vous aider à suivre votre évolution et exploser vos objectifs ! 💪
           </p>
@@ -369,7 +369,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-ava
     <!-- Footer -->
     <footer class="mt-16 pb-6 text-center">
       <p class="text-gray-600 text-xs uppercase tracking-[0.3em] font-bold">
-        <span class="text-[#3b82f6]">AGRE</span> FITNESS • Engineered for Excellence
+        <span class="text-[#3b82f6]">FITNESS</span> TRACKER • Copyright Agre Agency 2026
       </p>
     </footer>
 

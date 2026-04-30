@@ -458,7 +458,7 @@ function videoUrl(string $videoFile): string
     <!-- Footer -->
     <footer class="mt-16 pb-6 text-center">
       <p class="text-gray-600 text-xs uppercase tracking-[0.3em] font-bold">
-        <span class="text-[#3b82f6]">AGRE</span> FITNESS
+        <span class="text-[#3b82f6]">FITNESS</span> TRACKER • Copyright Agre Agency 2026
       </p>
     </footer>
 

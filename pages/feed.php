@@ -119,7 +119,7 @@ function get_time_ago($datetime)
   return date('d M Y', $time);
 }
 
-$profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] : 'default_avatar.png';
+$profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] : 'default-avatar.png';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -249,7 +249,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
           <div class="w-12 h-12 rounded-full border-2 border-blue-500 overflow-hidden flex-shrink-0">
             <img src="../assets/images/<?= htmlspecialchars($profilePic) ?>"
               class="w-full h-full object-cover"
-              onerror="this.src='../assets/images/default_avatar.png';">
+              onerror="this.src='../assets/images/default-avatar.png';">
           </div>
 
           <div class="flex-1">
@@ -301,7 +301,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
         </div>
       <?php else: ?>
         <?php foreach ($posts as $post):
-          $postUserPic = !empty($post['profile_pic']) ? $post['profile_pic'] : 'default_avatar.png';
+          $postUserPic = !empty($post['profile_pic']) ? $post['profile_pic'] : 'default-avatar.png';
         ?>
           <article class="glass-card rounded-3xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all">
             <!-- Header du post -->
@@ -310,7 +310,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
                 <a href="profile.php?id=<?= $post['user_id'] ?>" class="w-10 h-10 rounded-full border border-gray-700 overflow-hidden hover:border-blue-500 transition-all">
                   <img src="../assets/images/<?= htmlspecialchars($postUserPic) ?>"
                     class="w-full h-full object-cover"
-                    onerror="this.src='../assets/images/default_avatar.png';">
+                    onerror="this.src='../assets/images/default-avatar.png';">
                 </a>
                 <div>
                   <a href="profile.php?id=<?= $post['user_id'] ?>" class="font-bold text-sm hover:text-blue-400 transition-colors">
@@ -368,7 +368,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
               <img src="../assets/images/<?= htmlspecialchars($post['image_url']) ?>?v=2"
                 alt="Post de <?= htmlspecialchars($post['username']) ?>"
                 class="w-full h-full object-contain"
-                onerror="this.src='../assets/images/default_avatar.png';">
+                onerror="this.src='../assets/images/default-avatar.png';">
             </div>
 
             <!-- Actions -->
@@ -446,7 +446,7 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
 
     <footer class="mt-16 pb-10 text-center">
       <p class="text-gray-600 text-xs uppercase tracking-[0.3em] font-bold">
-        <span class="text-[#3b82f6]">AGRE</span> FITNESS
+        <span class="text-[#3b82f6]">FITNESS</span> TRACKER • Copyright Agre Agency 2026
       </p>
     </footer>
   </main>
@@ -667,9 +667,9 @@ $profilePic = !empty($currentUser['profile_pic']) ? $currentUser['profile_pic'] 
 
         const likerRows = data.likers.map(u => `
           <div class="flex items-center gap-3 py-2 border-b border-gray-800 last:border-0">
-            <img src="../assets/images/${u.profile_pic || 'default_avatar.png'}"
+            <img src="../assets/images/${u.profile_pic || 'default-avatar.png'}"
                  class="w-9 h-9 rounded-full object-cover border border-gray-700"
-                 onerror="this.src='../assets/images/default_avatar.png'">
+                 onerror="this.src='../assets/images/default-avatar.png'">
             <a href="profile.php?id=${u.id}" class="text-sm font-semibold hover:text-blue-400 transition-colors">${u.username}</a>
           </div>
         `).join('');
