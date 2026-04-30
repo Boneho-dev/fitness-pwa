@@ -1,43 +1,25 @@
 <?php
 
-/**
- * =============================================================================
- * MESSAGERIE V2.0 - AGRE FITNESS
- * =============================================================================
- * Page listant les conversations avec style Glassmorphism moderne.
- * Correction du bug 403 par vérification des chemins et permissions.
- * 
- * Architecture :
- * - Requêtes PDO préparées sécurisées
- * - Protection XSS via htmlspecialchars
- * - Style Glassmorphism avec Tailwind CSS
- * - Indicateurs de présence en temps réel
- */
-
 session_start();
 require_once '../config/db.php';
 require_once '../includes/translations.php';
 
-// Initialisation de la langue
 initLanguage();
 
-// Vérification de session sécurisée
 if (!isset($_SESSION['user_id'])) {
   header('Location: ../index.php');
   exit;
 }
 
 $currentUserId = (int)$_SESSION['user_id'];
-$lang = $_SESSION['lang'] ?? 'fr';
 
 // =============================================================================
 // RÉCUPÉRATION DES CONVERSATIONS
 // =============================================================================
 
 try {
-  // Requête optimisée pour récupérer les conversations avec le dernier message
   $stmt = $pdo->prepare("
-        SELECT 
+        SELECT
             u.id as contact_id,
             u.username,
             u.profile_pic,
@@ -46,17 +28,17 @@ try {
             m.date_envoi as last_date,
             m.expediteur_id as last_sender,
             m.media_url as last_media,
-            (SELECT COUNT(*) FROM messages 
-             WHERE destinataire_id = :user_id 
-             AND expediteur_id = u.id 
+            (SELECT COUNT(*) FROM messages
+             WHERE destinataire_id = :user_id
+             AND expediteur_id = u.id
              AND lu = 0) as unread_count
         FROM fitness_users u
         INNER JOIN messages m ON (m.expediteur_id = u.id AND m.destinataire_id = :user_id2)
                                OR (m.destinataire_id = u.id AND m.expediteur_id = :user_id3)
         WHERE u.id != :user_id4
         AND m.date_envoi = (
-            SELECT MAX(date_envoi) 
-            FROM messages 
+            SELECT MAX(date_envoi)
+            FROM messages
             WHERE (expediteur_id = u.id AND destinataire_id = :user_id5)
                OR (destinataire_id = u.id AND expediteur_id = :user_id6)
         )
@@ -64,7 +46,7 @@ try {
     ");
 
   $stmt->execute([
-    ':user_id' => $currentUserId,
+    ':user_id'  => $currentUserId,
     ':user_id2' => $currentUserId,
     ':user_id3' => $currentUserId,
     ':user_id4' => $currentUserId,
@@ -78,14 +60,14 @@ try {
 }
 
 // =============================================================================
-// RÉCUPÉRATION DE TOUS LES UTILISATEURS POUR LA RECHERCHE
+// RÉCUPÉRATION DE TOUS LES UTILISATEURS
 // =============================================================================
 
 try {
   $stmt = $pdo->prepare("
-        SELECT id, username, profile_pic, last_active 
-        FROM fitness_users 
-        WHERE id != :user_id 
+        SELECT id, username, profile_pic, last_active
+        FROM fitness_users
+        WHERE id != :user_id
         ORDER BY username ASC
     ");
   $stmt->execute([':user_id' => $currentUserId]);
@@ -95,57 +77,24 @@ try {
   $allUsers = [];
 }
 
-$profilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'default_avatar.png';
-
-/**
- * Vérifie si un utilisateur est en ligne (actif dans les 5 dernières minutes)
- * 
- * @param string|null $lastActive Timestamp de dernière activité
- * @return bool True si l'utilisateur est considéré en ligne
- */
 function isUserOnline(?string $lastActive): bool
 {
   if (!$lastActive) return false;
-  $lastTime = strtotime($lastActive);
-  return (time() - $lastTime) < 300; // 5 minutes
+  return (time() - strtotime($lastActive)) < 300;
 }
 
-/**
- * Formate le temps relatif depuis le dernier message
- * 
- * @param string $datetime Timestamp du message
- * @param string $lang Code langue
- * @return string Temps formaté
- */
-function formatMessageTime(string $datetime, string $lang = 'fr'): string
+function formatMessageTime(string $datetime): string
 {
   $time = strtotime($datetime);
   $diff = time() - $time;
 
-  if ($diff < 60) return __('time_just_now', $lang);
-  if ($diff < 3600) {
-    $mins = floor($diff / 60);
-    return $mins . ' ' . __('time_minute', $lang) . ($mins > 1 && $lang !== 'zh' ? 's' : '');
-  }
-  if ($diff < 86400) {
-    $hours = floor($diff / 3600);
-    return $hours . ' ' . __('time_hour', $lang);
-  }
-  if ($diff < 604800) {
-    $days = floor($diff / 86400);
-    return $days . ' ' . __('time_day', $lang);
-  }
-
+  if ($diff < 60)    return 'À l\'instant';
+  if ($diff < 3600)  return floor($diff / 60) . ' min';
+  if ($diff < 86400) return floor($diff / 3600) . ' h';
+  if ($diff < 604800) return floor($diff / 86400) . ' j';
   return date('d/m', $time);
 }
 
-/**
- * Tronque un message pour l'aperçu
- * 
- * @param string|null $message Contenu du message
- * @param int $maxLength Longueur maximale
- * @return string Message tronqué
- */
 function truncateMessage(?string $message, int $maxLength = 50): string
 {
   if (!$message) return '';
@@ -154,7 +103,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?= $lang ?>">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8">
@@ -162,7 +111,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
   <meta name="theme-color" content="#050505">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title><?= __('messages_title', $lang) ?></title>
+  <title>Messages | AGRE Fitness</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -176,7 +125,6 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       min-height: 100vh;
     }
 
-    /* Glassmorphism Cards */
     .glass-card {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
@@ -192,19 +140,16 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
-    /* Message Preview Card */
     .message-preview {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%);
       border-left: 3px solid rgba(59, 130, 246, 0.5);
     }
 
-    /* Unread Badge */
     .unread-badge {
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
 
-    /* Online Indicator */
     .online-indicator {
       position: absolute;
       bottom: 2px;
@@ -227,26 +172,15 @@ function truncateMessage(?string $message, int $maxLength = 50): string
     }
 
     @keyframes pulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-
-      50% {
-        transform: scale(1.5);
-        opacity: 0;
-      }
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.5); opacity: 0; }
     }
 
-    /* Avatar Container */
     .avatar-container {
       position: relative;
       display: inline-block;
     }
 
-    /* Search Input */
     .search-input {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -259,57 +193,18 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    /* Floating Animation */
     @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0px);
-      }
-
-      50% {
-        transform: translateY(-5px);
-      }
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-5px); }
     }
 
-    .animate-float {
-      animation: float 3s ease-in-out infinite;
-    }
+    .animate-float { animation: float 3s ease-in-out infinite; }
 
-    /* Typing Indicator */
-    .typing-dots span {
-      animation: typing 1.4s infinite;
-    }
-
-    .typing-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-
-      0%,
-      100% {
-        opacity: 0.3;
-        transform: translateY(0);
-      }
-
-      50% {
-        opacity: 1;
-        transform: translateY(-3px);
-      }
-    }
-
-    /* Empty State */
     .empty-state-icon {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Member Card */
     .member-card {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -322,23 +217,10 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       transform: scale(1.05);
     }
 
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
   </style>
 </head>
 
@@ -346,17 +228,17 @@ function truncateMessage(?string $message, int $maxLength = 50): string
   <?php require_once '../includes/navbar.php'; ?>
 
   <div class="max-w-4xl mx-auto p-4 pt-24 pb-8">
-    <!-- Header avec animation -->
+    <!-- Header -->
     <header class="mb-8 animate-float">
       <h1 class="text-3xl font-black tracking-tight mb-2">
         <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          <?= __('messages_header', $lang) ?>
+          Messages
         </span>
       </h1>
-      <p class="text-gray-500 text-sm"><?= __('messages_subtitle', $lang) ?></p>
+      <p class="text-gray-500 text-sm">Vos conversations et contacts</p>
     </header>
 
-    <!-- Barre de recherche élégante -->
+    <!-- Barre de recherche -->
     <div class="mb-6">
       <div class="relative">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -367,7 +249,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
         </svg>
         <input id="searchInput"
           type="text"
-          placeholder="<?= __('messages_search_placeholder', $lang) ?>"
+          placeholder="Rechercher un contact..."
           oninput="filterContacts(this.value)"
           class="search-input w-full rounded-2xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none">
       </div>
@@ -378,41 +260,38 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       <div id="contactsList" class="space-y-3">
         <?php foreach ($conversations as $conv):
           $isLastFromMe = ($conv['last_sender'] == $currentUserId);
-          $hasUnread = $conv['unread_count'] > 0;
-          $isOnline = isUserOnline($conv['last_active']);
+          $hasUnread    = $conv['unread_count'] > 0;
+          $isOnline     = isUserOnline($conv['last_active']);
           $displayMessage = $conv['last_media']
-            ? ($isLastFromMe ? '📷 ' . __('messages_you_prefix', $lang) . __('feed_add_photo', $lang)
-              : '📷 ' . __('feed_add_photo', $lang))
-            : ($isLastFromMe ? __('messages_you_prefix', $lang) . truncateMessage($conv['last_message'])
+            ? ($isLastFromMe ? '📷 Vous : une photo' : '📷 une photo')
+            : ($isLastFromMe ? 'Vous : ' . truncateMessage($conv['last_message'])
               : truncateMessage($conv['last_message']));
         ?>
           <a href="conversation.php?user=<?= (int)$conv['contact_id'] ?>"
             data-username="<?= strtolower(htmlspecialchars($conv['username'])) ?>"
-            class="contact-item glass-card rounded-2xl p-4 flex items-center gap-4 
+            class="contact-item glass-card rounded-2xl p-4 flex items-center gap-4
                     <?= $hasUnread ? 'message-preview' : '' ?>
                     <?= $isOnline ? 'border-green-500/20' : '' ?>">
 
-            <!-- Avatar avec indicateur de présence -->
             <div class="avatar-container flex-shrink-0">
-              <div class="w-14 h-14 rounded-full overflow-hidden border-2 
+              <div class="w-14 h-14 rounded-full overflow-hidden border-2
                           <?= $hasUnread ? 'border-blue-500' : 'border-gray-700' ?>
                           <?= $isOnline ? 'shadow-lg shadow-green-500/20' : '' ?>">
-                <img src="../assets/images/<?= htmlspecialchars($conv['profile_pic'] ?? 'default_avatar.png') ?>?v=2"
+                <img src="../assets/images/<?= htmlspecialchars($conv['profile_pic'] ?? 'default-avatar.png') ?>?v=2"
                   class="w-full h-full object-cover"
                   alt="<?= htmlspecialchars($conv['username']) ?>"
-                  onerror="this.src='../assets/images/default_avatar.png'">
+                  onerror="this.src='../assets/images/default-avatar.png'">
               </div>
               <?php if ($isOnline): ?>
-                <div class="online-indicator" title="<?= __('chat_online', $lang) ?>"></div>
+                <div class="online-indicator" title="En ligne"></div>
               <?php endif; ?>
             </div>
 
-            <!-- Informations du contact -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1">
                 <h3 class="font-bold text-white truncate"><?= htmlspecialchars($conv['username']) ?></h3>
                 <span class="text-xs text-gray-500 flex-shrink-0">
-                  <?= formatMessageTime($conv['last_date'], $lang) ?>
+                  <?= formatMessageTime($conv['last_date']) ?>
                 </span>
               </div>
               <p class="text-sm <?= $hasUnread ? 'text-white font-medium' : 'text-gray-400' ?> truncate">
@@ -420,7 +299,6 @@ function truncateMessage(?string $message, int $maxLength = 50): string
               </p>
             </div>
 
-            <!-- Badge non lus et flèche -->
             <div class="flex items-center gap-3 flex-shrink-0">
               <?php if ($hasUnread): ?>
                 <span class="w-6 h-6 unread-badge rounded-full flex items-center justify-center text-xs font-bold">
@@ -437,10 +315,9 @@ function truncateMessage(?string $message, int $maxLength = 50): string
       </div>
     <?php endif; ?>
 
-    <!-- Section Tous les membres (visible à la recherche ou si pas de conversations) -->
+    <!-- Section Tous les membres -->
     <div id="allMembersSection" class="mt-8 <?= empty($conversations) ? '' : 'hidden' ?>">
       <?php if (empty($conversations)): ?>
-        <!-- État vide stylisé -->
         <div class="text-center py-12 mb-6">
           <div class="empty-state-icon w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -448,16 +325,15 @@ function truncateMessage(?string $message, int $maxLength = 50): string
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <p class="text-gray-400 mb-2"><?= __('messages_no_conversations', $lang) ?></p>
-          <p class="text-gray-500 text-sm"><?= __('messages_start_conversation', $lang) ?></p>
+          <p class="text-gray-400 mb-2">Aucune conversation pour le moment</p>
+          <p class="text-gray-500 text-sm">Commencez à discuter avec un membre !</p>
         </div>
       <?php else: ?>
         <p class="text-xs text-gray-500 uppercase tracking-wider mb-4 font-semibold">
-          <?= __('messages_community_members', $lang) ?>
+          Membres de la communauté
         </p>
       <?php endif; ?>
 
-      <!-- Grid des membres -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="membersGrid">
         <?php foreach ($allUsers as $u):
           $isOnline = isUserOnline($u['last_active']);
@@ -466,72 +342,61 @@ function truncateMessage(?string $message, int $maxLength = 50): string
             data-username="<?= strtolower(htmlspecialchars($u['username'])) ?>"
             class="member-item member-card rounded-xl p-4 text-center group">
             <div class="avatar-container mx-auto mb-3">
-              <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-700 
+              <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-700
                           group-hover:border-blue-500/50 transition-colors">
-                <img src="../assets/images/<?= htmlspecialchars($u['profile_pic'] ?? 'default_avatar.png') ?>?v=2"
+                <img src="../assets/images/<?= htmlspecialchars($u['profile_pic'] ?? 'default-avatar.png') ?>?v=2"
                   class="w-full h-full object-cover"
                   alt="<?= htmlspecialchars($u['username']) ?>"
-                  onerror="this.src='../assets/images/default_avatar.png'">
+                  onerror="this.src='../assets/images/default-avatar.png'">
               </div>
               <?php if ($isOnline): ?>
-                <div class="online-indicator" title="<?= __('chat_online', $lang) ?>"></div>
+                <div class="online-indicator" title="En ligne"></div>
               <?php endif; ?>
             </div>
             <p class="text-sm font-medium truncate text-gray-300 group-hover:text-white transition-colors">
               <?= htmlspecialchars($u['username']) ?>
             </p>
             <p class="text-xs text-gray-600 mt-1">
-              <?= $isOnline ? __('chat_online', $lang) : __('chat_offline', $lang) ?>
+              <?= $isOnline ? 'En ligne' : 'Hors ligne' ?>
             </p>
           </a>
         <?php endforeach; ?>
       </div>
 
-      <!-- Message aucun résultat -->
       <p id="noMemberResults" class="hidden text-gray-500 text-sm text-center py-8">
-        <?= __('messages_no_results', $lang) ?>
+        Aucun résultat trouvé
       </p>
     </div>
   </div>
 
   <script>
-    /**
-     * Filtre les contacts et membres selon la recherche
-     * @param {string} query Terme de recherche
-     */
     function filterContacts(query) {
       const q = query.toLowerCase().trim();
       const allMembersSection = document.getElementById('allMembersSection');
-      const noMemberResults = document.getElementById('noMemberResults');
-      const hasConversations = document.querySelector('.contact-item') !== null;
+      const noMemberResults   = document.getElementById('noMemberResults');
+      const hasConversations  = document.querySelector('.contact-item') !== null;
 
-      // Filtrer les conversations existantes
       const convItems = document.querySelectorAll('.contact-item');
-      let convVisible = 0;
       convItems.forEach(item => {
-        const name = item.dataset.username || '';
-        const match = !q || name.includes(q);
-        item.style.display = match ? '' : 'none';
-        if (match) convVisible++;
+        const name  = item.dataset.username || '';
+        item.style.display = (!q || name.includes(q)) ? '' : 'none';
       });
 
-      // Afficher/masquer la section membres selon la recherche
       if (q || !hasConversations) {
         if (allMembersSection) allMembersSection.classList.remove('hidden');
 
         const memberItems = document.querySelectorAll('.member-item');
         let memberVisible = 0;
         memberItems.forEach(item => {
-          const name = item.dataset.username || '';
+          const name  = item.dataset.username || '';
           const match = !q || name.includes(q);
           item.style.display = match ? '' : 'none';
           if (match) memberVisible++;
         });
 
-        // Afficher message si aucun résultat
         if (noMemberResults) {
           if (memberVisible === 0 && q) {
-            noMemberResults.textContent = '<?= __('messages_no_results', $lang) ?> "' + query + '"';
+            noMemberResults.textContent = 'Aucun résultat pour "' + query + '"';
             noMemberResults.classList.remove('hidden');
             document.getElementById('membersGrid').classList.add('hidden');
           } else {
@@ -540,30 +405,20 @@ function truncateMessage(?string $message, int $maxLength = 50): string
           }
         }
       } else {
-        // Sans recherche : masquer la section membres sauf si pas de conversations
-        if (allMembersSection && hasConversations) {
-          allMembersSection.classList.add('hidden');
-        }
+        if (allMembersSection && hasConversations) allMembersSection.classList.add('hidden');
         if (noMemberResults) noMemberResults.classList.add('hidden');
         document.querySelectorAll('.member-item').forEach(item => item.style.display = '');
       }
     }
 
-    // Focus automatique sur la recherche au chargement
     document.addEventListener('DOMContentLoaded', () => {
       const searchInput = document.getElementById('searchInput');
-      if (searchInput && !searchInput.value) {
-        searchInput.focus();
-      }
+      if (searchInput && !searchInput.value) searchInput.focus();
     });
 
-    // Rafraîchissement automatique toutes les 30 secondes pour les indicateurs de présence
     setInterval(() => {
-      // Recharger la page uniquement si l'utilisateur n'est pas en train de taper
       const activeElement = document.activeElement;
-      if (activeElement && activeElement.id !== 'searchInput') {
-        location.reload();
-      }
+      if (activeElement && activeElement.id !== 'searchInput') location.reload();
     }, 30000);
   </script>
 </body>

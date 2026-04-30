@@ -66,7 +66,7 @@ $allVideos = $stmt_videos->fetchAll();
 $videosMale = array_filter($allVideos, fn($v) => $v['gender'] === 'male');
 $videosFemale = array_filter($allVideos, fn($v) => $v['gender'] === 'female');
 
-$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_avatar.png';
+$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default-avatar.png';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -213,7 +213,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
             <img src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=2"
               class="w-full h-full object-cover"
               alt="Photo de profil"
-              onerror="this.src='../assets/images/default_avatar.png';">
+              onerror="this.src='../assets/images/default-avatar.png';">
           </div>
           <a href="profile.php" class="absolute -bottom-1 -right-1 w-8 h-8 bg-[#3b82f6] rounded-full flex items-center justify-center hover:bg-blue-500 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -238,7 +238,7 @@ $profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : 'default_ava
           <img src="../assets/images/profile_1_1776453233.jpeg?v=2"
             class="w-full h-full object-cover"
             alt="Ange-Kevin Agre - Créateur"
-            onerror="this.src='../assets/images/default_avatar.png';">
+            onerror="this.src='../assets/images/default-avatar.png';">
         </div>
         <div class="flex-1">
           <h2 class="text-lg font-bold mb-2 text-[#3b82f6]">Bienvenue sur AGRE FITNESS</h2>

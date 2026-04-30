@@ -3,7 +3,7 @@
 // Fallback → XAMPP local (root / no password)
 $host = getenv('MYSQLHOST')     ?: getenv('MYSQL_HOST')     ?: 'localhost';
 $port = getenv('MYSQLPORT')     ?: getenv('MYSQL_PORT')     ?: '3306';
-$db   = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'agre_fitness';
+$db = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
 $user = getenv('MYSQLUSER')     ?: getenv('MYSQL_USER')     ?: 'root';
 $pass = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: '';
 
