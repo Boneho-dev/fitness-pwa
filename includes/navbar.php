@@ -23,11 +23,14 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 $_navProfilePic = $_SESSION['user']['profile_pic']
   ?? $_SESSION['profile_pic']
   ?? null;
-// Fallback statique : profile_{user_id}.jpeg commité dans le dépôt (contourne l'éphémère Railway)
+// Fallback statique : profile_{id}.jpeg ou .jpg à la racine de /images/
 if (empty($_navProfilePic) && !empty($_SESSION['user_id'])) {
-  $_navStaticFile = __DIR__ . '/../assets/images/profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
-  if (file_exists($_navStaticFile)) {
-    $_navProfilePic = 'profiles/profile_' . (int)$_SESSION['user_id'] . '.jpeg';
+  $_navUid     = (int)$_SESSION['user_id'];
+  $_navImgDir  = __DIR__ . '/../assets/images/';
+  if (file_exists($_navImgDir . 'profile_' . $_navUid . '.jpeg')) {
+    $_navProfilePic = 'profile_' . $_navUid . '.jpeg';
+  } elseif (file_exists($_navImgDir . 'profile_' . $_navUid . '.jpg')) {
+    $_navProfilePic = 'profile_' . $_navUid . '.jpg';
   }
 }
 $_navAvatarUrl = !empty($_navProfilePic)

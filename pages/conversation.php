@@ -47,7 +47,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$currentUserId, $chatUserId, $chatUserId, $currentUserId]);
 $messages = $stmt->fetchAll();
 
-$currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'default_avatar.png';
+$currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'default-avatar.png';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -141,7 +141,7 @@ $currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic']
       </a>
 
       <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500">
-        <img src="../assets/images/<?= htmlspecialchars($chatUser['profile_pic'] ?? 'default_avatar.png') ?>"
+        <img src="../assets/images/<?= htmlspecialchars($chatUser['profile_pic'] ?? 'default-avatar.png') ?>"
           class="w-full h-full object-cover">
       </div>
 
@@ -173,7 +173,7 @@ $currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic']
       ?>
         <div class="flex <?= $isSent ? 'justify-end' : 'justify-start' ?> mb-4" data-message-id="<?= $msg['id'] ?>">
           <?php if (!$isSent): ?>
-            <img src="../assets/images/<?= htmlspecialchars($msg['profile_pic'] ?? 'default_avatar.png') ?>"
+            <img src="../assets/images/<?= htmlspecialchars($msg['profile_pic'] ?? 'default-avatar.png') ?>"
               class="w-8 h-8 rounded-full mr-2 self-end">
           <?php endif; ?>
 
@@ -396,7 +396,7 @@ $currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic']
       }
 
       div.innerHTML = `
-        <img src="../assets/images/${msg.profile_pic || 'default_avatar.png'}" class="w-8 h-8 rounded-full mr-2 self-end">
+        <img src="../assets/images/${msg.profile_pic || 'default-avatar.png'}" class="w-8 h-8 rounded-full mr-2 self-end">
         <div class="max-w-[75%] message-received p-3 text-sm">
           ${mediaHtml}
           ${contentHtml}

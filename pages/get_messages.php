@@ -53,7 +53,7 @@ try {
             'contenu' => htmlspecialchars($msg['contenu']),
             'media_url' => $msg['media_url'],
             'time' => date('H:i', strtotime($msg['date_envoi'])),
-            'profile_pic' => $msg['profile_pic'] ?? 'default_avatar.png'
+            'profile_pic' => $msg['profile_pic'] ?? 'default-avatar.png'
         ];
     }, $messages);
     

@@ -36,10 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
   $profile_pic    = $_POST['old_pic'] ?? '';
 
   if (!empty($_FILES['profile_pic']['name']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
-    $target_dir    = "../assets/images/profiles/";
-    if (!is_dir($target_dir)) {
-      mkdir($target_dir, 0777, true);
-    }
+    $target_dir    = "../assets/images/";
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $file_type     = mime_content_type($_FILES['profile_pic']['tmp_name']);
 
@@ -47,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
       $file_name = "profile_" . $current_user_id . ".jpeg";
 
       if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_dir . $file_name)) {
-        $profile_pic = 'profiles/' . $file_name;
+        $profile_pic = $file_name;
       }
     }
   }
@@ -109,12 +106,15 @@ try {
   exit;
 }
 
-$profilePic = !empty($user['profile_pic']) ? $user['profile_pic'] : null;
-if (empty($profilePic)) {
-  $_staticFile = __DIR__ . "/../assets/images/profiles/profile_{$profile_user_id}.jpeg";
-  $profilePic = file_exists($_staticFile)
-    ? "profiles/profile_{$profile_user_id}.jpeg"
-    : 'default-avatar.png';
+$_profImgDir = __DIR__ . '/../assets/images/';
+if (!empty($user['profile_pic']) && file_exists($_profImgDir . $user['profile_pic'])) {
+  $profilePic = $user['profile_pic'];
+} elseif (file_exists($_profImgDir . 'profile_' . $profile_user_id . '.jpeg')) {
+  $profilePic = 'profile_' . $profile_user_id . '.jpeg';
+} elseif (file_exists($_profImgDir . 'profile_' . $profile_user_id . '.jpg')) {
+  $profilePic = 'profile_' . $profile_user_id . '.jpg';
+} else {
+  $profilePic = 'default-avatar.png';
 }
 
 // =============================================================================

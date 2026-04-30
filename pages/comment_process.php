@@ -57,7 +57,7 @@ try {
         'comments_count' => $commentsCount,
         'comment_id' => $commentId,
         'username' => htmlspecialchars($user['username']),
-        'profile_pic' => $user['profile_pic'] ?? 'default_avatar.png',
+        'profile_pic' => $user['profile_pic'] ?? 'default-avatar.png',
         'content' => htmlspecialchars($content),
         'created_at' => date('d/m/Y H:i')
     ]);
