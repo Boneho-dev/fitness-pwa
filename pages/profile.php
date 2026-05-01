@@ -46,14 +46,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
       $message = "Format non supporté. Utilisez JPG, PNG, GIF ou WEBP.";
     } else {
       // Nom fixe : écrase toujours le même fichier → pas d'accumulation
-      $file_name = "profile_" . $current_user_id . ".jpeg";
-      $dest      = "../assets/images/" . $file_name;
+      $file_name  = "profile_" . $current_user_id . ".jpeg";
+      $upload_dir = __DIR__ . "/../assets/images/";
+      $dest       = $upload_dir . $file_name;
+
+      // Tente chmod si le volume Railway n'est pas encore writable
+      if (!is_writable($upload_dir)) {
+        @chmod($upload_dir, 0777);
+      }
 
       if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $dest)) {
-        $profile_pic = $file_name; // stocké en DB : "profile_1.jpeg"
+        $profile_pic = $file_name;
       } else {
+        $php_err = $_FILES['profile_pic']['error'];
+        error_log("[upload] FAILED → dest={$dest} | writable=" . (is_writable($upload_dir) ? 'yes' : 'no') . " | php_error={$php_err} | tmp=" . $_FILES['profile_pic']['tmp_name']);
         $message = "Échec de l'enregistrement. Vérifiez les permissions du dossier assets/images/.";
-        error_log("[upload] move_uploaded_file failed → dest=" . $dest . " | writable=" . (is_writable("../assets/images/") ? "yes" : "no"));
       }
     }
   }
@@ -416,6 +423,11 @@ function formatRelativeTime(string $datetime): string
       </div>
     <?php endif; ?>
 
+    <?php if ($is_own_profile): ?>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="old_pic" value="<?= htmlspecialchars($user['profile_pic'] ?? '') ?>">
+    <?php endif; ?>
+
     <!-- Section Profil Header -->
     <div class="glass-card rounded-3xl p-6 mb-6 animate-fade-in animate-delay-1">
       <div class="flex flex-col md:flex-row items-center gap-6">
@@ -505,10 +517,9 @@ function formatRelativeTime(string $datetime): string
       </div>
     </div>
 
-    <!-- Formulaire d'édition (son propre profil) -->
+    <!-- Champs d'édition (son propre profil) -->
     <?php if ($is_own_profile): ?>
-      <form method="POST" enctype="multipart/form-data" class="space-y-4 animate-fade-in animate-delay-2">
-        <input type="hidden" name="old_pic" value="<?= htmlspecialchars($user['profile_pic'] ?? '') ?>">
+      <div class="space-y-4 animate-fade-in animate-delay-2">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -578,7 +589,8 @@ function formatRelativeTime(string $datetime): string
                        shadow-lg shadow-blue-500/25">
           Enregistrer les modifications
         </button>
-      </form>
+      </div>
+    </form>
 
     <?php else: ?>
       <!-- Vue publique -->
