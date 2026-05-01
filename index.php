@@ -74,7 +74,9 @@ $lang = $_SESSION['lang'] ?? 'fr';
   <meta name="apple-mobile-web-app-title" content="AGRE Fitness">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="description" content="AGRE Fitness - Suivez votre évolution et partagez avec la communauté">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
   <title><?= __('login_title') ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -335,6 +337,14 @@ $lang = $_SESSION['lang'] ?? 'fr';
   </div>
 
   <script>
+    // Enregistrement du Service Worker PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .catch((err) => console.warn('SW registration failed:', err))
+      })
+    }
+
     // Gestion du dropdown de langue
     function toggleLangDropdown() {
       const dropdown = document.getElementById('langDropdown');

@@ -1,0 +1,24 @@
+{
+  "name": "Agre Fitness",
+  "short_name": "AgreFit",
+  "description": "Suivez votre évolution et partagez avec la communauté fitness",
+  "start_url": "/index.php",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4e73df",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/assets/icons/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

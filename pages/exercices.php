@@ -355,7 +355,7 @@ function videoUrl(string $videoFile): string
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
               <div class="video-thumb mb-3 relative">
                 <video src="<?= htmlspecialchars($videoUrl) ?>"
-                  muted loop preload="metadata"
+                  muted loop playsinline preload="metadata"
                   onmouseenter="this.play()"
                   onmouseleave="this.pause(); this.currentTime = 0;">
                 </video>
@@ -380,7 +380,7 @@ function videoUrl(string $videoFile): string
           ?>
             <div class="mobile-thumbnail group"
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'hommes')">
-              <video src="<?= htmlspecialchars($videoUrl) ?>" muted preload="metadata"></video>
+              <video src="<?= htmlspecialchars($videoUrl) ?>" autoplay muted loop playsinline preload="auto"></video>
               <div class="mobile-play-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
@@ -411,7 +411,7 @@ function videoUrl(string $videoFile): string
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
               <div class="video-thumb mb-3 relative">
                 <video src="<?= htmlspecialchars($videoUrl) ?>"
-                  muted loop preload="metadata"
+                  muted loop playsinline preload="metadata"
                   onmouseenter="this.play()"
                   onmouseleave="this.pause(); this.currentTime = 0;">
                 </video>
@@ -436,7 +436,7 @@ function videoUrl(string $videoFile): string
           ?>
             <div class="mobile-thumbnail group"
               onclick="openVideoModal('<?= htmlspecialchars($videoUrl) ?>', '<?= htmlspecialchars(addslashes($video['name_fr'])) ?>', 'femmes')">
-              <video src="<?= htmlspecialchars($videoUrl) ?>" muted preload="metadata"></video>
+              <video src="<?= htmlspecialchars($videoUrl) ?>" autoplay muted loop playsinline preload="auto"></video>
               <div class="mobile-play-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
