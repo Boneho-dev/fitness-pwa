@@ -19,6 +19,18 @@ if (session_status() === PHP_SESSION_ACTIVE && function_exists('initLanguage')) 
 // Récupérer la langue courante
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 
+// Badge messages non lus
+$_navUnread = 0;
+if ($_navUid && isset($pdo)) {
+  try {
+    $_stmt = $pdo->prepare("SELECT COUNT(*) FROM messages WHERE destinataire_id = ? AND lu = 0");
+    $_stmt->execute([$_navUid]);
+    $_navUnread = (int)$_stmt->fetchColumn();
+  } catch (Exception $_e) {
+    $_navUnread = 0;
+  }
+}
+
 // Photo de profil navbar : priorité fichier disque > default (ignore session stale)
 $_navUid    = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
 $_navImgDir = __DIR__ . '/../assets/images/';
@@ -183,8 +195,13 @@ $_navAvatarUrl = '../assets/images/' . $_navAvatarFile;
             🎥
           </a>
           <a href="messages.php"
-            class="px-3 py-2 rounded-lg text-xs lg:text-sm font-bold text-gray-400 hover:text-green-400 hover:bg-green-500/10 transition-all whitespace-nowrap">
+            class="relative px-3 py-2 rounded-lg text-xs lg:text-sm font-bold text-gray-400 hover:text-green-400 hover:bg-green-500/10 transition-all whitespace-nowrap flex items-center gap-1">
             💬 <?= strtoupper(__('nav_messages', $lang)) ?>
+            <?php if ($_navUnread > 0): ?>
+              <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-black bg-red-500 text-white rounded-full leading-none">
+                <?= $_navUnread > 99 ? '99+' : $_navUnread ?>
+              </span>
+            <?php endif; ?>
           </a>
         </div>
       </div>
@@ -233,8 +250,13 @@ $_navAvatarUrl = '../assets/images/' . $_navAvatarFile;
     <a href="exercices.php" onclick="closeMobileMenu()">
       <span class="text-red-400">🎥</span> <?= strtoupper(__('nav_exercises', $lang)) ?>
     </a>
-    <a href="messages.php" onclick="closeMobileMenu()">
+    <a href="messages.php" onclick="closeMobileMenu()" class="flex items-center justify-center gap-2">
       <span class="text-green-400">💬</span> <?= strtoupper(__('nav_messages', $lang)) ?>
+      <?php if ($_navUnread > 0): ?>
+        <span class="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1 text-xs font-black bg-red-500 text-white rounded-full leading-none">
+          <?= $_navUnread > 99 ? '99+' : $_navUnread ?>
+        </span>
+      <?php endif; ?>
     </a>
     <a href="profile.php" onclick="closeMobileMenu()">
       <span class="text-gray-400">👤</span> <?= strtoupper(__('nav_profile', $lang)) ?>

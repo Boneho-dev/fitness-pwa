@@ -77,6 +77,15 @@ try {
   $allUsers = [];
 }
 
+function resolveContactAvatar(int $uid, ?string $dbPic): string
+{
+  $dir = __DIR__ . '/../assets/images/';
+  if (!empty($dbPic) && file_exists($dir . $dbPic)) return $dbPic;
+  if (file_exists($dir . 'profile_' . $uid . '.jpeg'))  return 'profile_' . $uid . '.jpeg';
+  if (file_exists($dir . 'profile_' . $uid . '.jpg'))   return 'profile_' . $uid . '.jpg';
+  return 'default-avatar.png';
+}
+
 function isUserOnline(?string $lastActive): bool
 {
   if (!$lastActive) return false;
@@ -277,7 +286,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
               <div class="w-14 h-14 rounded-full overflow-hidden border-2
                           <?= $hasUnread ? 'border-blue-500' : 'border-gray-700' ?>
                           <?= $isOnline ? 'shadow-lg shadow-green-500/20' : '' ?>">
-                <img src="../assets/images/<?= htmlspecialchars($conv['profile_pic'] ?? 'default-avatar.png') ?>?v=2"
+                <img src="../assets/images/<?= htmlspecialchars(resolveContactAvatar((int)$conv['contact_id'], $conv['profile_pic'])) ?>?v=<?= time() ?>"
                   class="w-full h-full object-cover"
                   alt="<?= htmlspecialchars($conv['username']) ?>"
                   onerror="this.src='../assets/images/default-avatar.png'">
@@ -344,7 +353,7 @@ function truncateMessage(?string $message, int $maxLength = 50): string
             <div class="avatar-container mx-auto mb-3">
               <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-700
                           group-hover:border-blue-500/50 transition-colors">
-                <img src="../assets/images/<?= htmlspecialchars($u['profile_pic'] ?? 'default-avatar.png') ?>?v=2"
+                <img src="../assets/images/<?= htmlspecialchars(resolveContactAvatar((int)$u['id'], $u['profile_pic'])) ?>?v=<?= time() ?>"
                   class="w-full h-full object-cover"
                   alt="<?= htmlspecialchars($u['username']) ?>"
                   onerror="this.src='../assets/images/default-avatar.png'">

@@ -47,7 +47,28 @@ $stmt = $pdo->prepare("
 $stmt->execute([$currentUserId, $chatUserId, $chatUserId, $currentUserId]);
 $messages = $stmt->fetchAll();
 
-$currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic'] : 'default-avatar.png';
+$_convImgDir = __DIR__ . '/../assets/images/';
+$_convUid    = (int)$_SESSION['user_id'];
+if (!empty($_SESSION['profile_pic']) && file_exists($_convImgDir . $_SESSION['profile_pic'])) {
+  $currentProfilePic = $_SESSION['profile_pic'];
+} elseif (file_exists($_convImgDir . 'profile_' . $_convUid . '.jpeg')) {
+  $currentProfilePic = 'profile_' . $_convUid . '.jpeg';
+} elseif (file_exists($_convImgDir . 'profile_' . $_convUid . '.jpg')) {
+  $currentProfilePic = 'profile_' . $_convUid . '.jpg';
+} else {
+  $currentProfilePic = 'default-avatar.png';
+}
+
+$_chatPic = $chatUser['profile_pic'] ?? null;
+if (!empty($_chatPic) && file_exists($_convImgDir . $_chatPic)) {
+  $chatProfilePic = $_chatPic;
+} elseif (file_exists($_convImgDir . 'profile_' . $chatUserId . '.jpeg')) {
+  $chatProfilePic = 'profile_' . $chatUserId . '.jpeg';
+} elseif (file_exists($_convImgDir . 'profile_' . $chatUserId . '.jpg')) {
+  $chatProfilePic = 'profile_' . $chatUserId . '.jpg';
+} else {
+  $chatProfilePic = 'default-avatar.png';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -141,8 +162,9 @@ $currentProfilePic = !empty($_SESSION['profile_pic']) ? $_SESSION['profile_pic']
       </a>
 
       <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500">
-        <img src="../assets/images/<?= htmlspecialchars($chatUser['profile_pic'] ?? 'default-avatar.png') ?>"
-          class="w-full h-full object-cover">
+        <img src="../assets/images/<?= htmlspecialchars($chatProfilePic) ?>?v=<?= time() ?>"
+          class="w-full h-full object-cover"
+          onerror="this.src='../assets/images/default-avatar.png'">
       </div>
 
       <div class="flex-1">

@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Europe/Paris');
+
 // Railway env vars (MYSQLHOST / MYSQL_HOST both supported)
 // Fallback → XAMPP local (root / no password)
 $host = getenv('MYSQLHOST')     ?: getenv('MYSQL_HOST')     ?: 'localhost';

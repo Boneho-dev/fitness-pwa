@@ -29,6 +29,9 @@ $currentUser = $stmt->fetch();
 
 $error = '';
 $success = '';
+if (isset($_GET['posted'])) {
+  $success = "Votre post a été publié avec succès !";
+}
 
 // --- LOGIQUE : CRÉATION D'UN NOUVEAU POST ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_post'])) {
@@ -52,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_post'])) {
         // Insertion en base de données
         $stmt = $pdo->prepare("INSERT INTO posts (user_id, image_url, caption) VALUES (?, ?, ?)");
         $stmt->execute([$_SESSION['user_id'], $dbPath, $caption]);
-        $success = "Votre post a été publié avec succès !";
+        header('Location: feed.php?posted=1');
+        exit;
       } else {
         $error = "Erreur lors de l'upload de l'image.";
       }

@@ -424,173 +424,173 @@ function formatRelativeTime(string $datetime): string
     <?php endif; ?>
 
     <?php if ($is_own_profile): ?>
-    <form method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="old_pic" value="<?= htmlspecialchars($user['profile_pic'] ?? '') ?>">
-    <?php endif; ?>
+      <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="old_pic" value="<?= htmlspecialchars($user['profile_pic'] ?? '') ?>">
+      <?php endif; ?>
 
-    <!-- Section Profil Header -->
-    <div class="glass-card rounded-3xl p-6 mb-6 animate-fade-in animate-delay-1">
-      <div class="flex flex-col md:flex-row items-center gap-6">
+      <!-- Section Profil Header -->
+      <div class="glass-card rounded-3xl p-6 mb-6 animate-fade-in animate-delay-1">
+        <div class="flex flex-col md:flex-row items-center gap-6">
 
-        <!-- Photo de profil -->
-        <div class="relative group">
-          <div class="avatar-ring">
-            <div class="w-28 h-28 rounded-full overflow-hidden bg-gray-800 border-4 border-[#111]">
-              <img id="preview"
-                src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
-                class="w-full h-full object-cover"
-                alt="Photo de profil"
-                onerror="this.src='../assets/images/default-avatar.png'">
+          <!-- Photo de profil -->
+          <div class="relative group">
+            <div class="avatar-ring">
+              <div class="w-28 h-28 rounded-full overflow-hidden bg-gray-800 border-4 border-[#111]">
+                <img id="preview"
+                  src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
+                  class="w-full h-full object-cover"
+                  alt="Photo de profil"
+                  onerror="this.src='../assets/images/default-avatar.png'">
+              </div>
             </div>
-          </div>
 
-          <?php if ($is_own_profile): ?>
-            <label class="absolute bottom-0 right-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-400 transition-all shadow-lg group-hover:scale-110">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <input type="file" name="profile_pic" class="hidden" accept="image/*" onchange="previewImage(this)">
-            </label>
-          <?php endif; ?>
-        </div>
-
-        <!-- Infos utilisateur -->
-        <div class="flex-1 text-center md:text-left">
-          <div class="flex flex-col md:flex-row items-center gap-3 mb-3">
-            <h2 class="text-2xl font-bold"><?= htmlspecialchars($user['username']) ?></h2>
-            <span class="gender-badge <?= ($user['gender'] ?? 'male') === 'female' ? 'gender-female' : 'gender-male' ?>">
-              <?= ($user['gender'] ?? 'male') === 'female' ? '♀️ Femme' : '♂️ Homme' ?>
-            </span>
-          </div>
-
-          <?php if (!empty($user['bio'])): ?>
-            <p class="text-gray-400 mb-4 max-w-md"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
-          <?php endif; ?>
-
-          <!-- Statistiques -->
-          <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
-            <div class="stat-card rounded-xl px-4 py-2 text-center">
-              <p class="text-xl font-bold text-white"><?= $followersCount ?></p>
-              <p class="text-xs text-gray-500">Abonnés</p>
-            </div>
-            <div class="stat-card rounded-xl px-4 py-2 text-center">
-              <p class="text-xl font-bold text-white"><?= $followingCount ?></p>
-              <p class="text-xs text-gray-500">Abonnements</p>
-            </div>
-            <div class="stat-card rounded-xl px-4 py-2 text-center">
-              <p class="text-xl font-bold text-white"><?= count($profilePosts) ?></p>
-              <p class="text-xs text-gray-500">Publications</p>
-            </div>
-          </div>
-
-          <!-- Actions (profil autre) -->
-          <?php if (!$is_own_profile): ?>
-            <div class="flex items-center justify-center md:justify-start gap-3">
-              <button id="followBtn"
-                onclick="toggleFollow(<?= $profile_user_id ?>, <?= $isFollowing ? 'true' : 'false' ?>)"
-                class="px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all
-                             <?= $isFollowing ? 'btn-following' : 'btn-follow text-white' ?>">
-                <?php if ($isFollowing): ?>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span id="followBtnText">Ne plus suivre</span>
-                <?php else: ?>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  <span id="followBtnText">Suivre</span>
-                <?php endif; ?>
-              </button>
-
-              <a href="conversation.php?user=<?= $profile_user_id ?>"
-                class="glass-card px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-white/10 transition-all">
+            <?php if ($is_own_profile): ?>
+              <label class="absolute bottom-0 right-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-400 transition-all shadow-lg group-hover:scale-110">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Envoyer un message
-              </a>
+                <input type="file" name="profile_pic" class="hidden" accept="image/*" onchange="previewImage(this)">
+              </label>
+            <?php endif; ?>
+          </div>
+
+          <!-- Infos utilisateur -->
+          <div class="flex-1 text-center md:text-left">
+            <div class="flex flex-col md:flex-row items-center gap-3 mb-3">
+              <h2 class="text-2xl font-bold"><?= htmlspecialchars($user['username']) ?></h2>
+              <span class="gender-badge <?= ($user['gender'] ?? 'male') === 'female' ? 'gender-female' : 'gender-male' ?>">
+                <?= ($user['gender'] ?? 'male') === 'female' ? '♀️ Femme' : '♂️ Homme' ?>
+              </span>
             </div>
-          <?php endif; ?>
+
+            <?php if (!empty($user['bio'])): ?>
+              <p class="text-gray-400 mb-4 max-w-md"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
+            <?php endif; ?>
+
+            <!-- Statistiques -->
+            <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
+              <div class="stat-card rounded-xl px-4 py-2 text-center">
+                <p class="text-xl font-bold text-white"><?= $followersCount ?></p>
+                <p class="text-xs text-gray-500">Abonnés</p>
+              </div>
+              <div class="stat-card rounded-xl px-4 py-2 text-center">
+                <p class="text-xl font-bold text-white"><?= $followingCount ?></p>
+                <p class="text-xs text-gray-500">Abonnements</p>
+              </div>
+              <div class="stat-card rounded-xl px-4 py-2 text-center">
+                <p class="text-xl font-bold text-white"><?= count($profilePosts) ?></p>
+                <p class="text-xs text-gray-500">Publications</p>
+              </div>
+            </div>
+
+            <!-- Actions (profil autre) -->
+            <?php if (!$is_own_profile): ?>
+              <div class="flex items-center justify-center md:justify-start gap-3">
+                <button id="followBtn"
+                  onclick="toggleFollow(<?= $profile_user_id ?>, <?= $isFollowing ? 'true' : 'false' ?>)"
+                  class="px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all
+                             <?= $isFollowing ? 'btn-following' : 'btn-follow text-white' ?>">
+                  <?php if ($isFollowing): ?>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span id="followBtnText">Ne plus suivre</span>
+                  <?php else: ?>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span id="followBtnText">Suivre</span>
+                  <?php endif; ?>
+                </button>
+
+                <a href="conversation.php?user=<?= $profile_user_id ?>"
+                  class="glass-card px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-white/10 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Envoyer un message
+                </a>
+              </div>
+            <?php endif; ?>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Champs d'édition (son propre profil) -->
-    <?php if ($is_own_profile): ?>
-      <div class="space-y-4 animate-fade-in animate-delay-2">
+      <!-- Champs d'édition (son propre profil) -->
+      <?php if ($is_own_profile): ?>
+        <div class="space-y-4 animate-fade-in animate-delay-2">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <!-- Pseudo -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Pseudo</label>
-            <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required
-              class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            <!-- Pseudo -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Pseudo</label>
+              <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required
+                class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
+
+            <!-- Email -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</label>
+              <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required
+                class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
+
+            <!-- Genre -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Genre</label>
+              <select name="gender" required class="glass-input w-full rounded-lg p-3 text-white focus:outline-none bg-transparent">
+                <option value="male" <?= ($user['gender'] ?? '') === 'male'   ? 'selected' : '' ?>>♂️ Homme</option>
+                <option value="female" <?= ($user['gender'] ?? '') === 'female' ? 'selected' : '' ?>>♀️ Femme</option>
+              </select>
+            </div>
+
+            <!-- Âge -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Âge</label>
+              <input type="number" name="age" value="<?= $user['age'] ?? '' ?>"
+                placeholder="25" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
+
+            <!-- Taille -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Taille (cm)</label>
+              <input type="number" name="height" value="<?= $user['height'] ?? '' ?>"
+                placeholder="180" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
+
+            <!-- Poids actuel -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Poids actuel (kg)</label>
+              <input type="number" step="0.1" name="current_weight" value="<?= $user['current_weight'] ?? '' ?>"
+                placeholder="75.5" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
+
+            <!-- Objectif -->
+            <div class="glass-card rounded-xl p-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Objectif poids (kg)</label>
+              <input type="number" step="0.1" name="goal_weight" value="<?= $user['goal_weight'] ?? '' ?>"
+                placeholder="70.0" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            </div>
           </div>
 
-          <!-- Email -->
+          <!-- Bio -->
           <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required
-              class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bio</label>
+            <textarea name="bio" rows="3" placeholder="Décrivez votre parcours..."
+              class="glass-input w-full rounded-lg p-3 text-white focus:outline-none resize-none"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
           </div>
 
-          <!-- Genre -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Genre</label>
-            <select name="gender" required class="glass-input w-full rounded-lg p-3 text-white focus:outline-none bg-transparent">
-              <option value="male" <?= ($user['gender'] ?? '') === 'male'   ? 'selected' : '' ?>>♂️ Homme</option>
-              <option value="female" <?= ($user['gender'] ?? '') === 'female' ? 'selected' : '' ?>>♀️ Femme</option>
-            </select>
-          </div>
-
-          <!-- Âge -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Âge</label>
-            <input type="number" name="age" value="<?= $user['age'] ?? '' ?>"
-              placeholder="25" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
-          </div>
-
-          <!-- Taille -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Taille (cm)</label>
-            <input type="number" name="height" value="<?= $user['height'] ?? '' ?>"
-              placeholder="180" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
-          </div>
-
-          <!-- Poids actuel -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">Poids actuel (kg)</label>
-            <input type="number" step="0.1" name="current_weight" value="<?= $user['current_weight'] ?? '' ?>"
-              placeholder="75.5" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
-          </div>
-
-          <!-- Objectif -->
-          <div class="glass-card rounded-xl p-5">
-            <label class="block text-xs font-bold uppercase tracking-wider text-purple-400 mb-2">Objectif poids (kg)</label>
-            <input type="number" step="0.1" name="goal_weight" value="<?= $user['goal_weight'] ?? '' ?>"
-              placeholder="70.0" class="glass-input w-full rounded-lg p-3 text-white focus:outline-none">
-          </div>
-        </div>
-
-        <!-- Bio -->
-        <div class="glass-card rounded-xl p-5">
-          <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bio</label>
-          <textarea name="bio" rows="3" placeholder="Décrivez votre parcours..."
-            class="glass-input w-full rounded-lg p-3 text-white focus:outline-none resize-none"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
-        </div>
-
-        <!-- Bouton -->
-        <button type="submit"
-          class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400
+          <!-- Bouton -->
+          <button type="submit"
+            class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400
                        text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02]
                        shadow-lg shadow-blue-500/25">
-          Enregistrer les modifications
-        </button>
-      </div>
-    </form>
+            Enregistrer les modifications
+          </button>
+        </div>
+      </form>
 
     <?php else: ?>
       <!-- Vue publique -->
