@@ -14,6 +14,27 @@ if (!isset($_SESSION['user_id'])) {
 $currentUserId = (int)$_SESSION['user_id'];
 
 // =============================================================================
+// SUPPRESSION DE CONVERSATION
+// =============================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_contact_id'])) {
+  $deleteContactId = (int)$_POST['delete_contact_id'];
+  if ($deleteContactId > 0) {
+    try {
+      $stmt = $pdo->prepare("
+        DELETE FROM messages
+        WHERE (expediteur_id = ? AND destinataire_id = ?)
+           OR (expediteur_id = ? AND destinataire_id = ?)
+      ");
+      $stmt->execute([$currentUserId, $deleteContactId, $deleteContactId, $currentUserId]);
+    } catch (PDOException $e) {
+      error_log("Erreur suppression conversation: " . $e->getMessage());
+    }
+  }
+  header('Location: messages.php');
+  exit;
+}
+
+// =============================================================================
 // RÉCUPÉRATION DES CONVERSATIONS
 // =============================================================================
 
@@ -276,50 +297,65 @@ function truncateMessage(?string $message, int $maxLength = 50): string
             : ($isLastFromMe ? 'Vous : ' . truncateMessage($conv['last_message'])
               : truncateMessage($conv['last_message']));
         ?>
-          <a href="conversation.php?user=<?= (int)$conv['contact_id'] ?>"
-            data-username="<?= strtolower(htmlspecialchars($conv['username'])) ?>"
-            class="contact-item glass-card rounded-2xl p-4 flex items-center gap-4
+          <div data-username="<?= strtolower(htmlspecialchars($conv['username'])) ?>"
+            class="contact-item glass-card rounded-2xl p-4 flex items-center gap-3
                     <?= $hasUnread ? 'message-preview' : '' ?>
                     <?= $isOnline ? 'border-green-500/20' : '' ?>">
 
-            <div class="avatar-container flex-shrink-0">
-              <div class="w-14 h-14 rounded-full overflow-hidden border-2
-                          <?= $hasUnread ? 'border-blue-500' : 'border-gray-700' ?>
-                          <?= $isOnline ? 'shadow-lg shadow-green-500/20' : '' ?>">
-                <img src="../assets/images/<?= htmlspecialchars(resolveContactAvatar((int)$conv['contact_id'], $conv['profile_pic'])) ?>?v=<?= time() ?>"
-                  class="w-full h-full object-cover"
-                  alt="<?= htmlspecialchars($conv['username']) ?>"
-                  onerror="this.src='../assets/images/default-avatar.png'">
-              </div>
-              <?php if ($isOnline): ?>
-                <div class="online-indicator" title="En ligne"></div>
-              <?php endif; ?>
-            </div>
+            <a href="conversation.php?user=<?= (int)$conv['contact_id'] ?>"
+              class="flex items-center gap-4 flex-1 min-w-0">
 
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-1">
-                <h3 class="font-bold text-white truncate"><?= htmlspecialchars($conv['username']) ?></h3>
-                <span class="text-xs text-gray-500 flex-shrink-0">
-                  <?= formatMessageTime($conv['last_date']) ?>
-                </span>
+              <div class="avatar-container flex-shrink-0">
+                <div class="w-14 h-14 rounded-full overflow-hidden border-2
+                            <?= $hasUnread ? 'border-blue-500' : 'border-gray-700' ?>
+                            <?= $isOnline ? 'shadow-lg shadow-green-500/20' : '' ?>">
+                  <img src="../assets/images/<?= htmlspecialchars(resolveContactAvatar((int)$conv['contact_id'], $conv['profile_pic'])) ?>?v=<?= time() ?>"
+                    class="w-full h-full object-cover"
+                    alt="<?= htmlspecialchars($conv['username']) ?>"
+                    onerror="this.src='../assets/images/default-avatar.png'">
+                </div>
+                <?php if ($isOnline): ?>
+                  <div class="online-indicator" title="En ligne"></div>
+                <?php endif; ?>
               </div>
-              <p class="text-sm <?= $hasUnread ? 'text-white font-medium' : 'text-gray-400' ?> truncate">
-                <?= htmlspecialchars($displayMessage) ?>
-              </p>
-            </div>
 
-            <div class="flex items-center gap-3 flex-shrink-0">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h3 class="font-bold text-white truncate"><?= htmlspecialchars($conv['username']) ?></h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">
+                    <?= formatMessageTime($conv['last_date']) ?>
+                  </span>
+                </div>
+                <p class="text-sm <?= $hasUnread ? 'text-white font-medium' : 'text-gray-400' ?> truncate">
+                  <?= htmlspecialchars($displayMessage) ?>
+                </p>
+              </div>
+            </a>
+
+            <div class="flex items-center gap-2 flex-shrink-0">
               <?php if ($hasUnread): ?>
                 <span class="w-6 h-6 unread-badge rounded-full flex items-center justify-center text-xs font-bold">
                   <?= (int)$conv['unread_count'] > 99 ? '99+' : (int)$conv['unread_count'] ?>
                 </span>
               <?php endif; ?>
               <svg xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="h-4 w-4 text-gray-700 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
+              <form method="POST"
+                onsubmit="return confirmDelete('<?= htmlspecialchars(addslashes($conv['username'])) ?>')">
+                <input type="hidden" name="delete_contact_id" value="<?= (int)$conv['contact_id'] ?>">
+                <button type="submit"
+                  class="p-2 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                  title="Supprimer la conversation">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </form>
             </div>
-          </a>
+          </div>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
@@ -379,6 +415,10 @@ function truncateMessage(?string $message, int $maxLength = 50): string
   </div>
 
   <script>
+    function confirmDelete(username) {
+      return confirm('Supprimer toute la conversation avec ' + username + ' ?\nCette action est irréversible.');
+    }
+
     function filterContacts(query) {
       const q = query.toLowerCase().trim();
       const allMembersSection = document.getElementById('allMembersSection');
