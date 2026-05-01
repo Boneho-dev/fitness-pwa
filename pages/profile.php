@@ -33,58 +33,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
   $goal_weight    = filter_input(INPUT_POST, 'goal_weight', FILTER_VALIDATE_FLOAT) ?: null;
   $height         = filter_input(INPUT_POST, 'height', FILTER_VALIDATE_INT) ?: null;
   $bio            = trim($_POST['bio'] ?? '');
-  $profile_pic    = $_POST['old_pic'] ?? '';
 
+  // Garde l'ancienne valeur DB par défaut — ne jamais écraser avec une chaîne vide
+  $profile_pic = !empty($_POST['old_pic']) ? $_POST['old_pic'] : null;
+
+  // --- Upload photo de profil ---
   if (!empty($_FILES['profile_pic']['name']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
-    $target_dir    = "../assets/images/";
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $file_type     = mime_content_type($_FILES['profile_pic']['tmp_name']);
 
-    if (in_array($file_type, $allowed_types)) {
+    if (!in_array($file_type, $allowed_types)) {
+      $message = "Format non supporté. Utilisez JPG, PNG, GIF ou WEBP.";
+    } else {
       $file_name = "profile_" . $current_user_id . ".jpeg";
+      $dest      = "../assets/images/" . $file_name;
 
-      if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $target_dir . $file_name)) {
-        $profile_pic = $file_name;
+      if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $dest)) {
+        $profile_pic = $file_name; // "profile_1.jpeg" — chemin court en DB
+      } else {
+        $message = "Échec de l'enregistrement du fichier. Vérifiez les permissions du dossier.";
+        error_log("[profile upload] move_uploaded_file failed → " . realpath("../assets/images/") . "/" . $file_name);
       }
     }
   }
 
-  try {
-    $stmt = $pdo->prepare("
-            UPDATE fitness_users
-            SET username = :username,
-                email = :email,
-                gender = :gender,
-                age = :age,
-                height = :height,
-                current_weight = :current_weight,
-                goal_weight = :goal_weight,
-                bio = :bio,
-                profile_pic = :profile_pic,
-                last_active = NOW()
-            WHERE id = :id
-        ");
-    $stmt->execute([
-      ':username'       => $username,
-      ':email'          => $email,
-      ':gender'         => $gender,
-      ':age'            => $age,
-      ':height'         => $height,
-      ':current_weight' => $current_weight,
-      ':goal_weight'    => $goal_weight,
-      ':bio'            => $bio,
-      ':profile_pic'    => $profile_pic,
-      ':id'             => $current_user_id
-    ]);
+  // --- Mise à jour DB uniquement si pas d'erreur d'upload ---
+  if (empty($message)) {
+    try {
+      $stmt = $pdo->prepare("
+        UPDATE fitness_users
+        SET username = :username,
+            email = :email,
+            gender = :gender,
+            age = :age,
+            height = :height,
+            current_weight = :current_weight,
+            goal_weight = :goal_weight,
+            bio = :bio,
+            profile_pic = :profile_pic,
+            last_active = NOW()
+        WHERE id = :id
+      ");
+      $stmt->execute([
+        ':username'       => $username,
+        ':email'          => $email,
+        ':gender'         => $gender,
+        ':age'            => $age,
+        ':height'         => $height,
+        ':current_weight' => $current_weight,
+        ':goal_weight'    => $goal_weight,
+        ':bio'            => $bio,
+        ':profile_pic'    => $profile_pic,
+        ':id'             => $current_user_id
+      ]);
 
-    $message = 'Profil mis à jour avec succès !';
-    $_SESSION['username']                = $username;
-    $_SESSION['profile_pic']             = $profile_pic;
-    $_SESSION['user']['profile_pic']     = $profile_pic;
-  } catch (PDOException $e) {
-    $message = "Erreur lors de la mise à jour.";
-    error_log("Erreur mise à jour profil: " . $e->getMessage());
+      $_SESSION['username']            = $username;
+      $_SESSION['profile_pic']         = $profile_pic;
+      $_SESSION['user']['profile_pic'] = $profile_pic;
+
+      // Redirect PRG : recharge la page en GET → déclenche le cache-bust time()
+      header('Location: profile.php?saved=1');
+      exit;
+    } catch (PDOException $e) {
+      $message = "Erreur base de données lors de la mise à jour.";
+      error_log("Erreur profil update: " . $e->getMessage());
+    }
   }
+}
+
+// Message de succès après redirect PRG
+if (isset($_GET['saved'])) {
+  $message = 'Profil mis à jour avec succès ! 🎉';
 }
 
 // =============================================================================
