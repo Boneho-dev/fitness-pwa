@@ -405,7 +405,7 @@ function formatRelativeTime(string $datetime): string
           <div class="avatar-ring">
             <div class="w-28 h-28 rounded-full overflow-hidden bg-gray-800 border-4 border-[#111]">
               <img id="preview"
-                src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=2"
+                src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
                 class="w-full h-full object-cover"
                 alt="Photo de profil"
                 onerror="this.src='../assets/images/default-avatar.png'">

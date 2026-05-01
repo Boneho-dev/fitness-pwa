@@ -225,7 +225,7 @@ if (!empty($user['profile_pic']) && file_exists($_imgDir . $user['profile_pic'])
       <div class="flex items-center gap-6">
         <div class="relative">
           <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-[#3b82f6] bg-gray-800">
-            <img src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=2"
+            <img src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
               class="w-full h-full object-cover"
               alt="Photo de profil"
               onerror="this.src='../assets/images/default-avatar.png';">

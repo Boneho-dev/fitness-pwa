@@ -19,23 +19,17 @@ if (session_status() === PHP_SESSION_ACTIVE && function_exists('initLanguage')) 
 // Récupérer la langue courante
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 
-// Photo de profil pour la navbar (priorité : session user array > session directe > fichier statique > défaut)
-$_navProfilePic = $_SESSION['user']['profile_pic']
-  ?? $_SESSION['profile_pic']
-  ?? null;
-// Fallback statique : profile_{id}.jpeg ou .jpg à la racine de /images/
-if (empty($_navProfilePic) && !empty($_SESSION['user_id'])) {
-  $_navUid     = (int)$_SESSION['user_id'];
-  $_navImgDir  = __DIR__ . '/../assets/images/';
-  if (file_exists($_navImgDir . 'profile_' . $_navUid . '.jpeg')) {
-    $_navProfilePic = 'profile_' . $_navUid . '.jpeg';
-  } elseif (file_exists($_navImgDir . 'profile_' . $_navUid . '.jpg')) {
-    $_navProfilePic = 'profile_' . $_navUid . '.jpg';
-  }
+// Photo de profil navbar : priorité fichier disque > default (ignore session stale)
+$_navUid    = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$_navImgDir = __DIR__ . '/../assets/images/';
+if ($_navUid && file_exists($_navImgDir . 'profile_' . $_navUid . '.jpeg')) {
+  $_navAvatarFile = 'profile_' . $_navUid . '.jpeg';
+} elseif ($_navUid && file_exists($_navImgDir . 'profile_' . $_navUid . '.jpg')) {
+  $_navAvatarFile = 'profile_' . $_navUid . '.jpg';
+} else {
+  $_navAvatarFile = 'default-avatar.png';
 }
-$_navAvatarUrl = !empty($_navProfilePic)
-  ? '../assets/images/' . htmlspecialchars($_navProfilePic)
-  : '../assets/images/default-avatar.png';
+$_navAvatarUrl = '../assets/images/' . $_navAvatarFile;
 ?>
 <style>
   /* Navbar responsive styles */
@@ -205,7 +199,7 @@ $_navAvatarUrl = !empty($_navProfilePic)
         <a href="profile.php"
           class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-800/60 transition-all group">
           <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-600 group-hover:border-[#3b82f6] transition-colors flex-shrink-0">
-            <img src="<?= $_navAvatarUrl ?>"
+            <img src="<?= $_navAvatarUrl ?>?v=<?= time() ?>"
               style="width:100%;height:100%;object-fit:cover;"
               alt="Mon profil"
               onerror="this.src='../assets/images/default-avatar.png'">
