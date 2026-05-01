@@ -19,7 +19,10 @@ if (session_status() === PHP_SESSION_ACTIVE && function_exists('initLanguage')) 
 // Récupérer la langue courante
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 
-// Badge messages non lus
+// Identifiant de l'utilisateur connecté (base de tout le bloc navbar)
+$_navUid = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+
+// Badge messages non lus — uniquement si connecté et PDO disponible
 $_navUnread = 0;
 if ($_navUid && isset($pdo)) {
   try {
@@ -32,7 +35,6 @@ if ($_navUid && isset($pdo)) {
 }
 
 // Photo de profil navbar : priorité fichier disque > default (ignore session stale)
-$_navUid    = !empty($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
 $_navImgDir = __DIR__ . '/../assets/images/';
 if ($_navUid && file_exists($_navImgDir . 'profile_' . $_navUid . '.jpeg')) {
   $_navAvatarFile = 'profile_' . $_navUid . '.jpeg';
