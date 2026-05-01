@@ -45,25 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
     if (!in_array($file_type, $allowed_types)) {
       $message = "Format non supporté. Utilisez JPG, PNG, GIF ou WEBP.";
     } else {
+      // Nom fixe : écrase toujours le même fichier → pas d'accumulation
       $file_name = "profile_" . $current_user_id . ".jpeg";
       $dest      = "../assets/images/" . $file_name;
 
-      // ===== DEBUG TEMPORAIRE — supprimer après diagnostic =====
-      echo "<pre style='background:#111;color:#0f0;padding:1rem;margin:1rem;border-radius:8px;z-index:9999;position:relative'>";
-      echo "<b>$_FILES :</b>\n";
-      var_dump($_FILES);
-      echo "\n<b>Chemin cible (relatif) :</b> " . htmlspecialchars($dest);
-      echo "\n<b>Chemin cible (absolu)  :</b> " . htmlspecialchars(realpath("../assets/images/") . DIRECTORY_SEPARATOR . $file_name);
-      echo "\n<b>Dossier accessible en écriture :</b> " . (is_writable("../assets/images/") ? "OUI ✓" : "NON ✗");
-      echo "\n<b>Type MIME détecté :</b> " . htmlspecialchars($file_type);
-      echo "</pre>";
-      // ===== FIN DEBUG =====
-
       if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $dest)) {
-        $profile_pic = $file_name; // "profile_1.jpeg" — chemin court en DB
+        $profile_pic = $file_name; // stocké en DB : "profile_1.jpeg"
       } else {
-        $message = "Échec de l'enregistrement du fichier. Vérifiez les permissions du dossier.";
-        error_log("[profile upload] move_uploaded_file failed → " . realpath("../assets/images/") . "/" . $file_name);
+        $message = "Échec de l'enregistrement. Vérifiez les permissions du dossier assets/images/.";
+        error_log("[upload] move_uploaded_file failed → dest=" . $dest . " | writable=" . (is_writable("../assets/images/") ? "yes" : "no"));
       }
     }
   }
