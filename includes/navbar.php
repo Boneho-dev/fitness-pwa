@@ -34,16 +34,15 @@ if ($_navUid && isset($pdo)) {
   }
 }
 
-// Photo de profil navbar : priorité fichier disque > default (ignore session stale)
-$_navImgDir = __DIR__ . '/../assets/images/';
-if ($_navUid && file_exists($_navImgDir . 'profile_' . $_navUid . '.jpeg')) {
-  $_navAvatarFile = 'profile_' . $_navUid . '.jpeg';
-} elseif ($_navUid && file_exists($_navImgDir . 'profile_' . $_navUid . '.jpg')) {
-  $_navAvatarFile = 'profile_' . $_navUid . '.jpg';
+// Photo de profil navbar : volume Railway storage/profiles/ → défaut statique
+$_navStorageDir = __DIR__ . '/../storage/profiles/';
+if ($_navUid && file_exists($_navStorageDir . 'profile_' . $_navUid . '.jpeg')) {
+  $_navAvatarUrl = '../storage/profiles/profile_' . $_navUid . '.jpeg';
+} elseif ($_navUid && file_exists($_navStorageDir . 'profile_' . $_navUid . '.jpg')) {
+  $_navAvatarUrl = '../storage/profiles/profile_' . $_navUid . '.jpg';
 } else {
-  $_navAvatarFile = 'default-avatar.png';
+  $_navAvatarUrl = '../assets/images/default-avatar.png';
 }
-$_navAvatarUrl = '../assets/images/' . $_navAvatarFile;
 ?>
 <style>
   /* Navbar responsive styles */

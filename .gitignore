@@ -1,1 +1,7 @@
-.vscode/    
+.vscode/
+
+# Uploads persistants — gérés par le Volume Railway, jamais committés
+storage/profiles/*
+storage/posts/*
+!storage/profiles/.gitkeep
+!storage/posts/.gitkeep

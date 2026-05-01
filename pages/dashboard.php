@@ -66,20 +66,18 @@ $allVideos = $stmt_videos->fetchAll();
 $videosMale = array_filter($allVideos, fn($v) => $v['gender'] === 'male');
 $videosFemale = array_filter($allVideos, fn($v) => $v['gender'] === 'female');
 
-// Résolution photo de profil : DB (si fichier présent) → .jpeg → .jpg → défaut
-$_uid      = (int)$_SESSION['user_id'];
-$_imgDir   = __DIR__ . '/../assets/images/';
-$_jpeg     = 'profile_' . $_uid . '.jpeg';
-$_jpg      = 'profile_' . $_uid . '.jpg';
+// Résolution photo de profil : storage (volume Railway) → défaut statique
+$_uid        = (int)$_SESSION['user_id'];
+$_storageDir = __DIR__ . '/../storage/profiles/';
 
-if (!empty($user['profile_pic']) && file_exists($_imgDir . $user['profile_pic'])) {
-  $profilePic = $user['profile_pic'];                   // valeur DB valide
-} elseif (file_exists($_imgDir . $_jpeg)) {
-  $profilePic = $_jpeg;                                 // profile_{id}.jpeg
-} elseif (file_exists($_imgDir . $_jpg)) {
-  $profilePic = $_jpg;                                  // profile_{id}.jpg
+if (!empty($user['profile_pic']) && file_exists($_storageDir . $user['profile_pic'])) {
+  $profilePic = 'storage/profiles/' . $user['profile_pic'];
+} elseif (file_exists($_storageDir . 'profile_' . $_uid . '.jpeg')) {
+  $profilePic = 'storage/profiles/profile_' . $_uid . '.jpeg';
+} elseif (file_exists($_storageDir . 'profile_' . $_uid . '.jpg')) {
+  $profilePic = 'storage/profiles/profile_' . $_uid . '.jpg';
 } else {
-  $profilePic = 'default-avatar.png';                   // aucun fichier trouvé
+  $profilePic = 'assets/images/default-avatar.png';
 }
 ?>
 <!DOCTYPE html>
@@ -213,7 +211,7 @@ if (!empty($user['profile_pic']) && file_exists($_imgDir . $user['profile_pic'])
 </head>
 
 <body class="text-white min-h-screen font-sans selection:bg-[#3b82f6] selection:text-white">
-  <script>console.log('[PHOTO] Chemin résolu :', '../assets/images/<?= addslashes($profilePic) ?>');</script>
+  <script>console.log('[PHOTO] Chemin résolu :', '../<?= addslashes($profilePic) ?>');</script>
 
   <!-- Navbar globale -->
   <?php require_once '../includes/navbar.php'; ?>
@@ -225,7 +223,7 @@ if (!empty($user['profile_pic']) && file_exists($_imgDir . $user['profile_pic'])
       <div class="flex items-center gap-6">
         <div class="relative">
           <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-[#3b82f6] bg-gray-800">
-            <img src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
+            <img src="../<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
               class="w-full h-full object-cover"
               alt="Photo de profil"
               onerror="this.src='../assets/images/default-avatar.png';">

@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_post'])) {
       // Génération d'un nom unique
       $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
       $filename = 'post_' . $_SESSION['user_id'] . '_' . time() . '_' . uniqid() . '.' . $extension;
-      $uploadPath = '../assets/images/posts/' . $filename;
-      $dbPath = 'posts/' . $filename;
+      $uploadPath = __DIR__ . '/../storage/posts/' . $filename;
+      $dbPath = 'storage/posts/' . $filename;
 
       // Déplacement du fichier
       if (move_uploaded_file($image['tmp_name'], $uploadPath)) {
@@ -392,7 +392,7 @@ if (!empty($currentUser['profile_pic']) && file_exists($_imgDir . $currentUser['
 
             <!-- Image du post -->
             <div class="relative aspect-[4/3] bg-black flex items-center justify-center">
-              <img src="../assets/images/<?= htmlspecialchars($post['image_url']) ?>?v=2"
+              <img src="../<?= htmlspecialchars($post['image_url']) ?>?v=2"
                 alt="Post de <?= htmlspecialchars($post['username']) ?>"
                 class="w-full h-full object-contain"
                 onerror="this.src='../assets/images/default-avatar.png';">

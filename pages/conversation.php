@@ -47,27 +47,28 @@ $stmt = $pdo->prepare("
 $stmt->execute([$currentUserId, $chatUserId, $chatUserId, $currentUserId]);
 $messages = $stmt->fetchAll();
 
-$_convImgDir = __DIR__ . '/../assets/images/';
-$_convUid    = (int)$_SESSION['user_id'];
-if (!empty($_SESSION['profile_pic']) && file_exists($_convImgDir . $_SESSION['profile_pic'])) {
-  $currentProfilePic = $_SESSION['profile_pic'];
-} elseif (file_exists($_convImgDir . 'profile_' . $_convUid . '.jpeg')) {
-  $currentProfilePic = 'profile_' . $_convUid . '.jpeg';
-} elseif (file_exists($_convImgDir . 'profile_' . $_convUid . '.jpg')) {
-  $currentProfilePic = 'profile_' . $_convUid . '.jpg';
+$_convStorageDir = __DIR__ . '/../storage/profiles/';
+$_convUid        = (int)$_SESSION['user_id'];
+
+if (!empty($_SESSION['profile_pic']) && file_exists($_convStorageDir . $_SESSION['profile_pic'])) {
+  $currentProfilePic = 'storage/profiles/' . $_SESSION['profile_pic'];
+} elseif (file_exists($_convStorageDir . 'profile_' . $_convUid . '.jpeg')) {
+  $currentProfilePic = 'storage/profiles/profile_' . $_convUid . '.jpeg';
+} elseif (file_exists($_convStorageDir . 'profile_' . $_convUid . '.jpg')) {
+  $currentProfilePic = 'storage/profiles/profile_' . $_convUid . '.jpg';
 } else {
-  $currentProfilePic = 'default-avatar.png';
+  $currentProfilePic = 'assets/images/default-avatar.png';
 }
 
 $_chatPic = $chatUser['profile_pic'] ?? null;
-if (!empty($_chatPic) && file_exists($_convImgDir . $_chatPic)) {
-  $chatProfilePic = $_chatPic;
-} elseif (file_exists($_convImgDir . 'profile_' . $chatUserId . '.jpeg')) {
-  $chatProfilePic = 'profile_' . $chatUserId . '.jpeg';
-} elseif (file_exists($_convImgDir . 'profile_' . $chatUserId . '.jpg')) {
-  $chatProfilePic = 'profile_' . $chatUserId . '.jpg';
+if (!empty($_chatPic) && file_exists($_convStorageDir . $_chatPic)) {
+  $chatProfilePic = 'storage/profiles/' . $_chatPic;
+} elseif (file_exists($_convStorageDir . 'profile_' . $chatUserId . '.jpeg')) {
+  $chatProfilePic = 'storage/profiles/profile_' . $chatUserId . '.jpeg';
+} elseif (file_exists($_convStorageDir . 'profile_' . $chatUserId . '.jpg')) {
+  $chatProfilePic = 'storage/profiles/profile_' . $chatUserId . '.jpg';
 } else {
-  $chatProfilePic = 'default-avatar.png';
+  $chatProfilePic = 'assets/images/default-avatar.png';
 }
 ?>
 <!DOCTYPE html>
@@ -162,7 +163,7 @@ if (!empty($_chatPic) && file_exists($_convImgDir . $_chatPic)) {
       </a>
 
       <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500">
-        <img src="../assets/images/<?= htmlspecialchars($chatProfilePic) ?>?v=<?= time() ?>"
+        <img src="../<?= htmlspecialchars($chatProfilePic) ?>?v=<?= time() ?>"
           class="w-full h-full object-cover"
           onerror="this.src='../assets/images/default-avatar.png'">
       </div>

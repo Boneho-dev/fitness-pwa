@@ -47,10 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
     } else {
       // Nom fixe : écrase toujours le même fichier → pas d'accumulation
       $file_name  = "profile_" . $current_user_id . ".jpeg";
-      $upload_dir = __DIR__ . "/../assets/images/";
+      $upload_dir = __DIR__ . "/../storage/profiles/";
       $dest       = $upload_dir . $file_name;
 
-      // Tente chmod si le volume Railway n'est pas encore writable
       if (!is_writable($upload_dir)) {
         @chmod($upload_dir, 0777);
       }
@@ -59,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
         $profile_pic = $file_name;
       } else {
         $php_err = $_FILES['profile_pic']['error'];
-        error_log("[upload] FAILED → dest={$dest} | writable=" . (is_writable($upload_dir) ? 'yes' : 'no') . " | php_error={$php_err} | tmp=" . $_FILES['profile_pic']['tmp_name']);
-        $message = "Échec de l'enregistrement. Vérifiez les permissions du dossier assets/images/.";
+        error_log("[upload] FAILED → dest={$dest} | writable=" . (is_writable($upload_dir) ? 'yes' : 'no') . " | php_error={$php_err} | tmp=" . $_FILES['profile_pic']['tmp_name']);hit $
+        $message = "Échec de l'enregistrement. Vérifiez les permissions du dossier storage/profiles/.";
       }
     }
   }
@@ -133,15 +132,15 @@ try {
   exit;
 }
 
-$_profImgDir = __DIR__ . '/../assets/images/';
-if (!empty($user['profile_pic']) && file_exists($_profImgDir . $user['profile_pic'])) {
-  $profilePic = $user['profile_pic'];
-} elseif (file_exists($_profImgDir . 'profile_' . $profile_user_id . '.jpeg')) {
-  $profilePic = 'profile_' . $profile_user_id . '.jpeg';
-} elseif (file_exists($_profImgDir . 'profile_' . $profile_user_id . '.jpg')) {
-  $profilePic = 'profile_' . $profile_user_id . '.jpg';
+$_storageDir = __DIR__ . '/../storage/profiles/';
+if (!empty($user['profile_pic']) && file_exists($_storageDir . $user['profile_pic'])) {
+  $profilePic = 'storage/profiles/' . $user['profile_pic'];
+} elseif (file_exists($_storageDir . 'profile_' . $profile_user_id . '.jpeg')) {
+  $profilePic = 'storage/profiles/profile_' . $profile_user_id . '.jpeg';
+} elseif (file_exists($_storageDir . 'profile_' . $profile_user_id . '.jpg')) {
+  $profilePic = 'storage/profiles/profile_' . $profile_user_id . '.jpg';
 } else {
-  $profilePic = 'default-avatar.png';
+  $profilePic = 'assets/images/default-avatar.png';
 }
 
 // =============================================================================
@@ -437,7 +436,7 @@ function formatRelativeTime(string $datetime): string
             <div class="avatar-ring">
               <div class="w-28 h-28 rounded-full overflow-hidden bg-gray-800 border-4 border-[#111]">
                 <img id="preview"
-                  src="../assets/images/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
+                  src="../<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>"
                   class="w-full h-full object-cover"
                   alt="Photo de profil"
                   onerror="this.src='../assets/images/default-avatar.png'">
