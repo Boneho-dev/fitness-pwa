@@ -34,7 +34,7 @@ if ($_navUid && isset($pdo)) {
   }
 }
 
-// Photo de profil navbar : volume Railway storage/profiles/ → défaut statique
+// Photo de profil navbar : storage/profiles/ → défaut statique
 $_navStorageDir = __DIR__ . '/../storage/profiles/';
 if ($_navUid && file_exists($_navStorageDir . 'profile_' . $_navUid . '.jpeg')) {
   $_navAvatarUrl = '../storage/profiles/profile_' . $_navUid . '.jpeg';

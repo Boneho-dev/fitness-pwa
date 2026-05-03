@@ -66,7 +66,7 @@ $allVideos = $stmt_videos->fetchAll();
 $videosMale = array_filter($allVideos, fn($v) => $v['gender'] === 'male');
 $videosFemale = array_filter($allVideos, fn($v) => $v['gender'] === 'female');
 
-// Résolution photo de profil : storage (volume Railway) → défaut statique
+// Résolution photo de profil : storage/profiles/ → défaut statique
 $_uid        = (int)$_SESSION['user_id'];
 $_storageDir = __DIR__ . '/../storage/profiles/';
 

@@ -1,13 +1,12 @@
 <?php
 date_default_timezone_set('Europe/Paris');
 
-// Railway env vars (MYSQLHOST / MYSQL_HOST both supported)
-// Fallback → XAMPP local (root / no password)
-$host = getenv('MYSQLHOST')     ?: getenv('MYSQL_HOST')     ?: 'localhost';
-$port = getenv('MYSQLPORT')     ?: getenv('MYSQL_PORT')     ?: '3306';
-$db = getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'railway';
-$user = getenv('MYSQLUSER')     ?: getenv('MYSQL_USER')     ?: 'root';
-$pass = getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: '';
+// InfinityFree production
+$host = 'sql208.infinityfree.com';
+$port = '3306';
+$db   = 'if0_41744337_fitness';
+$user = 'if0_41744337';
+$pass = 'AUZwr91ThQ';
 
 try {
     $pdo = new PDO(
@@ -15,9 +14,9 @@ try {
         $user,
         $pass
     );
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     http_response_code(500);
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
+    die("Erreur de connexion à la base de données.");
 }

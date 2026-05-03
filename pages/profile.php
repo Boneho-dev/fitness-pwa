@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_own_profile) {
         $profile_pic = $file_name;
       } else {
         $php_err = $_FILES['profile_pic']['error'];
-        error_log("[upload] FAILED → dest={$dest} | writable=" . (is_writable($upload_dir) ? 'yes' : 'no') . " | php_error={$php_err} | tmp=" . $_FILES['profile_pic']['tmp_name']);hit $
+        error_log("[upload] FAILED -> dest: $dest | writable: " . (is_writable($upload_dir) ? 'yes' : 'no') . " | php_error={$php_err} | tmp=" . $_FILES['profile_pic']['tmp_name']);
         $message = "Échec de l'enregistrement. Vérifiez les permissions du dossier storage/profiles/.";
       }
     }
